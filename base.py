@@ -28,7 +28,7 @@ class rObject:
 	_rmap = {}
 	_resources = {}
 
-	# also a define=proeprty to trigger export in equ file?
+	# also a define=property to trigger export in equ file?
 	def __init__(self, id=None, attr=None):
 		rType = self.rType
 		self.id = id
@@ -109,8 +109,12 @@ class rObject:
 		for rType,rList in rObject._resources.items():
 			for r in rList:
 				bb = bytes(r)
+
+				data = [bb[x*16:x*16+16] for x in range(0, len(bb)+15>>4)]
+
 				print("{}(${:08x}) {{".format(r.rName, r.get_id()))
-				print("\t$\"" + bb.hex() + "\"")
+				for x in data:
+					print("\t$\"" + x.hex() + "\"")
 				print("}\n")
 
 	@staticmethod
@@ -123,7 +127,35 @@ class rObject:
 				print(content)
 				print("}\n")
 
+# container for a 0-terminated list of resource ids.
 
+class rList(rObject):
+	def __init__(self, *children, id=None, attr=None):
+		super().__init__(id=id, attr=attr)
+		self.children = children
+		tt = self.rChildType
+		for x in self.children:
+			if not isinstance(x, tt):
+				raise TypeError("bad type: {}".format(type(x)))
+
+	def __bytes__(self):
+		bb = bytearray(4 + len(self.children))
+		offset = 0
+		for x in self.children:
+			struct.pack_into("<I", bb, offset, x.get_id())
+			offset += 4
+		return bytes(bb)
+
+	def _rez_string(self):
+		if not self.children: return "\t{}"
+		rv = "\t{\n"
+
+		ids = [x.get_id() for x in self.children]
+
+		rv += ",\n".join(["\t\t${:08x}".format(x) for x in ids])
+
+		rv += "\n\t}"
+		return rv
 
 class rTextObject(rObject):
 	def __init__(self, text, *, id=None, attr=None):

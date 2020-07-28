@@ -188,7 +188,7 @@ class rMenuItem(rObject):
 			"\t{}, {}, /* chars */\n"
 			"\t${:04x}, /* check */\n"
 			"\t${:04x}, /* flags */\n"
-			"\t${:04x} /* title ref */\n"
+			"\t${:04x} /* title ref */"
 		).format(
 			itemID,
 			to_char_string(self.itemChar),

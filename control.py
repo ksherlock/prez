@@ -4,23 +4,7 @@ from rect import *
 
 
 
-class rControlList(rObject):
-	rName = "rControlList"
-	rType = 0x8003
 
-	def __init__(self, children, *, id=None, attr=None):
-		super().__init__(id, attr)
-		self.children = children[:]
-		for x in children:
-			if not isinstance(x, rControlTemplate):
-				raise TypeError("bad type: {}".format(type(x)))
-
-	def __bytes__(self):
-		bb = b""
-		for x in self.children:
-			bb += struct.pack("<I", x.get_id())
-		bb += "\x00\x00\x00\x00" # 0-terminate
-		return bb
 
 # /*-------------------------------------------------------*/
 # /* Control List Descriptors
@@ -124,7 +108,7 @@ class rSimpleButton(rControlTemplate):
 		if controlID == None: controlID = self.get_id()
 
 		rv = (
-			"\t${:04x}, /* control ID */\n"
+			"\t${:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
 			"\tSimpleButtonControl {{\n"
 			"\t\t${:04x}, /* flags */\n"
@@ -206,7 +190,7 @@ class rCheckControl(rControlTemplate):
 		if controlID == None: controlID = self.get_id()
 
 		rv = (
-			"\t${:04x}, /* control ID */\n"
+			"\t${:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
 			"\tCheckControl {{\n"
 			"\t\t${:04x}, /* flags */\n"
@@ -293,7 +277,7 @@ class rRadioControl(rControlTemplate):
 		if controlID == None: controlID = self.get_id()
 
 		rv = (
-			"\t${:04x}, /* control ID */\n"
+			"\t${:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
 			"\tRadioControl {{\n"
 			"\t\t${:04x}, /* flags */\n"
@@ -315,3 +299,91 @@ class rRadioControl(rControlTemplate):
 			0
 		)
 		return rv
+
+
+class rThermometerControl(rControlTemplate):
+	rName = "rControlTemplate"
+	rType = 0x8004
+
+	def __init__(self, rect, *,
+		id=None, attr=None,
+		flags = 0x0000, moreFlags = 0x0000,
+		refCon = 0x00000000, controlID=None,
+		value=0,
+		scale=0,
+		horizontal=False,
+		invisible=False, inactive=False
+		):
+		super().__init__(id, attr)
+
+		if invisible: flags |= 0x0080 # ?
+		if inactive: flags |= 0xff00 # ?
+		if horizontal: flags |= 0x0001
+
+		moreFlags |= 0x1000 # fCtlProcNotPtr
+
+		# if color:
+		# 	moreFlags |= 0x08 # color table is resource id
+
+
+		self.flags = flags
+		self.moreFlags = moreFlags
+		self.rect = rect
+		self.refCon = refCon
+		self.controlID = controlID
+		self.value = value
+		self.scale = scale
+
+
+	def __bytes__(self):
+
+		controlID = self.controlID
+		if controlID == None: controlID = self.get_id()
+		bb = struct.pack("<HI4HIHHIHHI",
+			9, # pcount
+			controlID,
+			*self.rect,
+			0x87FF0002, # procref
+			self.flags,
+			self.moreFlags,
+			self.refCon,
+			self.value,
+			self.scale,
+			0, # color table
+			)
+		return bb
+
+	def _rez_string(self):
+
+		controlID = self.controlID
+		if controlID == None: controlID = self.get_id()
+
+		rv = (
+			"\t${:08x}, /* control ID */\n"
+			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
+			"\tThermometerControl {{\n"
+			"\t\t${:04x}, /* flags */\n"
+			"\t\t${:04x}, /* more flags */\n"
+			"\t\t${:08x}, /* refcon */\n"
+			"\t\t${:04x}, /* value */\n"
+			"\t\t${:04x}, /* scale */\n"
+			"\t\t${:08x} /* color table ref */\n"
+			# "\t\t${}, /* key equiv */\n"
+			"\t}}"
+		).format(
+			controlID,
+			*self.rect,
+			self.flags,
+			self.moreFlags,
+			self.refCon,
+			self.value,
+			self.scale,
+			0
+		)
+		return rv
+
+
+class rControlList(rList):
+	rName = "rControlList"
+	rType = 0x8003
+	rChildType = rControlTemplate

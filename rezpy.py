@@ -31,5 +31,10 @@ rSimpleButton(rect(x=10, y=10, height=13, width=90), "Save",default=True)
 
 rWindParam1(rect(x = 20, y = 20, height=100, width=100), "hello")
 
+rControlList(
+	rThermometerControl( (5, 5, 10, 55), value = 10, scale=100)
+)
+
+
 rObject.dumphex()
 rObject.dumprez()
