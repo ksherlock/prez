@@ -1,6 +1,6 @@
 # point(h,v) or point(x=.., y=..)
 
-__all__ = ['point', 'rect']
+__all__ = ['point', 'rect', 'size', 'format_rect', 'format_point', 'format_size']
 
 def all_defined(*args): return args.count(None)==0
 def all_none(*args): return args.count(None)==len(args)
@@ -67,6 +67,20 @@ def point(*args, x=None, y=None, h=None, v=None):
 		if all_defined(h,v): return (v, h)
 	raise ValueError("bad point parameter")
 
+def size(*args, height=None, width=None):
+
+	if len(args) == 2: return args
+
+	if len(args) == 1:
+		a, = args
+		if is_listy(a) and len(a) == 2:
+			return a
+
+	if not args:
+		if all_defined(height,width): return (height, width)
+	raise ValueError("bad size parameter")
+
+
 def rect(*args,
 	x=None,y=None,height=None,width=None,
 	h1=None,h2=None,v1=None,v2=None):
@@ -92,8 +106,11 @@ def rect(*args,
 	raise ValueError("bad rect parameter")
 
 
-def format_rect(r):
-	return "{{ {d}, {d}, {d}, {d} }}".format(*r)
+def format_rect(x):
+	return "{{ {:d}, {:d}, {:d}, {:d} }}".format(*x)
 
-def format_point(p):
-	return "{{ {d}, {d} }}".format(*p)
+def format_point(x):
+	return "{{ {:d}, {:d} }}".format(*x)
+
+def format_size(x):
+	return "{{ {:d}, {:d} }}".format(*x)
