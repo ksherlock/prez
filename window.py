@@ -5,6 +5,27 @@ import struct
 
 __all__ = ['rWindParam1']
 
+
+
+fHilited            = 0x0001
+fZoomed             = 0x0002
+fAllocated          = 0x0004
+fCtlTie             = 0x0008
+fInfo               = 0x0010
+fVis                = 0x0020
+fQContent           = 0x0040
+fMove               = 0x0080
+fZoom               = 0x0100
+fFlex               = 0x0200
+fGrow               = 0x0400
+fBScroll            = 0x0800
+fRScroll            = 0x1000
+fAlert              = 0x2000
+fClose              = 0x4000
+fTitle              = 0x8000
+
+
+
 def format_plane(x):
 	if x == -1: return "infront"
 	if x == 0: return "behind"
