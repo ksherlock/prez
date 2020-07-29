@@ -1,7 +1,7 @@
 from base import *
 import struct
 from rect import *
-
+from colors import *
 
 
 
@@ -42,6 +42,15 @@ from rect import *
 class rControlTemplate(rObject):
 	rName = "rControlTemplate"
 	rType = 0x8004	
+
+# TODO - Colors
+#
+# color table (TB V1 Ch 4-87):
+# word outline
+# word background when not selected
+# word background when selected
+# word title when selected 
+# word title when not selected
 
 class rSimpleButton(rControlTemplate):
 	rName = "rControlTemplate"
@@ -129,6 +138,12 @@ class rSimpleButton(rControlTemplate):
 		)
 		return rv
 
+# TODO - colors
+# color table (TB V1 Ch 4-87):
+# word reserved
+# word box not selected
+# word box checked
+# word title 
 class rCheckControl(rControlTemplate):
 	rName = "rControlTemplate"
 	rType = 0x8004
@@ -213,6 +228,12 @@ class rCheckControl(rControlTemplate):
 		)
 		return rv
 
+# TODO - colors
+# color table (TB V1 Ch 4-88):
+# word reserved
+# word box when off
+# word box when on
+# word title 
 class rRadioControl(rControlTemplate):
 	rName = "rControlTemplate"
 	rType = 0x8004
@@ -301,6 +322,23 @@ class rRadioControl(rControlTemplate):
 		return rv
 
 
+#
+# color table (System 6, Ch 3-11):
+# word outline color $000w
+# word interior color $000x
+# word fore color (dotted pattern) $000y
+# word fill color $p00z
+#
+# w, x, y, z  = color
+# p = 0 for solid pattern, 8 ($8000) for dotted pattern.
+#
+# default colors:
+# outline $0000 - black
+# interior $000f - white
+# fore $0000 - (not pattern)
+# fill = $0004 - red, not dotted.
+
+# TODO - colors not yet supported.
 class rThermometerControl(rControlTemplate):
 	rName = "rControlTemplate"
 	rType = 0x8004
@@ -379,6 +417,99 @@ class rThermometerControl(rControlTemplate):
 			self.value,
 			self.scale,
 			0
+		)
+		return rv
+
+
+#
+# TODO - penmask / penpattern not yet supported.
+#
+
+class rRectangleControl(rControlTemplate):
+	rName = "rControlTemplate"
+	rType = 0x8004
+
+	_colorMap = {
+		Black : 0b10,
+		Grey1 : 0b01,
+		Grey2 : 0b01,
+		Transparent: 0b00,
+		0b00: 0b00,
+		0b01: 0b01,
+		0b10: 0b10
+	}
+
+	def __init__(self, rect, *,
+		id=None, attr=None,
+		flags = 0x0000, moreFlags = 0x0000,
+		refCon = 0x00000000, controlID=None,
+		penHeight=1,
+		penWidth=2,
+		invisible=False, inactive=False,
+		color = Black
+		):
+		super().__init__(id, attr)
+
+		if invisible: flags |= 0x0080
+		if inactive: flags |= 0xff00
+		if color != None:
+			if color in self._colorMap:
+				flags |= self._colorMap[color]
+			else:
+				raise ValueError("Invalid rectangle color: {}}".format(color))
+
+		moreFlags |= 0x1000 # fCtlProcNotPtr
+
+
+		self.flags = flags
+		self.moreFlags = moreFlags
+		self.rect = rect
+		self.refCon = refCon
+		self.controlID = controlID
+		self.penHeight = penHeight
+		self.penWidth = penWidth
+
+	def __bytes__(self):
+
+		controlID = self.controlID
+		if controlID == None: controlID = self.get_id()
+		bb = struct.pack("<HI4HIHHIHH",
+			8, # pcount
+			controlID,
+			*self.rect,
+			0x87FF0003, # procref
+			self.flags,
+			self.moreFlags,
+			self.refCon,
+			self.penHeight,
+			self.penWidth
+			)
+		return bb
+
+	def _rez_string(self):
+
+		controlID = self.controlID
+		if controlID == None: controlID = self.get_id()
+
+		# penmask / pen pattern not yet supported.
+		rv = (
+			"\t${:08x}, /* control ID */\n"
+			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
+			"\tRectangleControl {{\n"
+			"\t\t${:04x}, /* flags */\n"
+			"\t\t${:04x}, /* more flags */\n"
+			"\t\t${:08x}, /* refcon */\n"
+			"\t\t${:04x}, /* pen height */\n"
+			"\t\t${:04x}, /* pen width */\n"
+			"\t}}"
+		).format(
+			controlID,
+			*self.rect,
+			self.flags,
+			self.moreFlags,
+			self.refCon,
+			self.penHeight,
+			self.penWidth
 		)
 		return rv
 
