@@ -41,7 +41,8 @@ from colors import *
 
 class rControlTemplate(rObject):
 	rName = "rControlTemplate"
-	rType = 0x8004	
+	rType = 0x8004
+	procRef = None
 
 # TODO - Colors
 #
@@ -55,6 +56,9 @@ class rControlTemplate(rObject):
 class rSimpleButton(rControlTemplate):
 	rName = "rControlTemplate"
 	rType = 0x8004
+	procRef = 0x80000000
+
+
 	# /*-------------------------------------------------------*/
 	# /* Flag equates for simple buttons.
 	# /*-------------------------------------------------------*/
@@ -147,6 +151,7 @@ class rSimpleButton(rControlTemplate):
 class rCheckControl(rControlTemplate):
 	rName = "rControlTemplate"
 	rType = 0x8004
+	procRef = 0x82000000
 
 	def __init__(self, rect, title, *,
 		id=None, attr=None,
@@ -237,6 +242,7 @@ class rCheckControl(rControlTemplate):
 class rRadioControl(rControlTemplate):
 	rName = "rControlTemplate"
 	rType = 0x8004
+	procRef = 0x84000000
 
 	def __init__(self, rect, title, *,
 		id=None, attr=None,
@@ -342,6 +348,7 @@ class rRadioControl(rControlTemplate):
 class rThermometerControl(rControlTemplate):
 	rName = "rControlTemplate"
 	rType = 0x8004
+	procRef = 0x87FF0002
 
 	def __init__(self, rect, *,
 		id=None, attr=None,
@@ -428,6 +435,7 @@ class rThermometerControl(rControlTemplate):
 class rRectangleControl(rControlTemplate):
 	rName = "rControlTemplate"
 	rType = 0x8004
+	procRef = 0x87FF0003
 
 	_colorMap = {
 		Black : 0b10,
@@ -512,6 +520,126 @@ class rRectangleControl(rControlTemplate):
 			self.penWidth
 		)
 		return rv
+
+
+fSquishText         = 0x0010   # 6.0.1
+fTextCanDim         = 0x0008
+fBlastText          = 0x0004
+fSubstituteText     = 0x0002
+fSubTextIsPascal    = 0x0001
+fSubTextIsC         = 0x0000
+
+# leftJustify = 0
+# centerJustify = 1
+# fullJustify = 2
+# rightJustify = -1
+
+class rStatTextControl(rControlTemplate):
+	rName = "rControlTemplate"
+	rType = 0x8004
+	procRef = 0x81000000
+
+
+	def __init__(self, rect, text, *,
+		id=None, attr=None,
+		flags = 0x0000, moreFlags = 0x0000,
+		refCon = 0x00000000, controlID=None,
+		invisible=False, inactive=False,
+		fSquishText = False,
+		fBlastText = False,
+		fTextCanDim = False,
+		fSubstituteText = False,
+		fSubTextIsC = False,
+		fSubTextIsPascal = False,
+		just = 0,
+		leftJust = False,
+		centerJust = False,
+		rightJust = False,
+		fullJust = False,
+		):
+		super().__init__(id, attr)
+
+		if invisible: flags |= 0x0080
+		if inactive: flags |= 0xff00
+
+		moreFlags |= 0x1000 # fCtlProcNotPtr
+		moreFlags |= 0b10 # text is resource
+
+		if fSquishText: flags |= 0x0010
+		if fTextCanDim: flags |= 0x0008
+		if fBlastText: flags |= 0x0004
+		if fSubstituteText: flags |= 0x0002
+		if fSubTextIsPascal: flags |= 0x0001| 0x0002
+		if fSubTextIsC != None: flags |= 0x0002
+
+		if leftJust: just = 0
+		elif centerJust: just = 1
+		elif fullJust: just = 2
+		elif rightJust: just = -1
+
+		self.text = make_string(text, rTextForLETextBox2)
+
+		self.flags = flags
+		self.moreFlags = moreFlags
+		self.rect = rect
+		self.refCon = refCon
+		self.controlID = controlID
+
+		self.justification = just
+
+
+		# warnings -
+		# fSquishText only effective w/ fBlastText
+		# fBlastText not compatible w/ string substitution or formatting.
+
+	def __bytes__(self):
+
+		controlID = self.controlID
+		if controlID == None: controlID = self.get_id()
+		bb = struct.pack("<HI4HIHHIIHH",
+			9, # pcount
+			controlID,
+			*self.rect,
+			0x81000000, # procref
+			self.flags,
+			self.moreFlags,
+			self.refCon,
+			self.text.get_id(),
+			0,
+			self.justification & 0xffff
+			)
+		return bb
+
+	def _rez_string(self):
+
+		controlID = self.controlID
+		if controlID == None: controlID = self.get_id()
+
+		# penmask / pen pattern not yet supported.
+		rv = (
+			"\t${:08x}, /* control ID */\n"
+			"\t{}, /* rect */\n"
+			"\tStatTextControl {{\n"
+			"\t\t${:04x}, /* flags */\n"
+			"\t\t${:04x}, /* more flags */\n"
+			"\t\t${:08x}, /* refcon */\n"
+			"\t\t${:08x}, /* text ref (rTextForLETextBox2) */\n"
+			"\t\t${:04x}, /* text size */\n"
+			"\t\t{:d}, /* text justification */\n"
+			"\t}}"
+		).format(
+			controlID,
+			format_rect(self.rect),
+			self.flags,
+			self.moreFlags,
+			self.refCon,
+			self.text.get_id(),
+			0,
+			self.justification & 0xffff
+		)
+		return rv
+
+
 
 
 class rControlList(rList):
