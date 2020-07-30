@@ -139,7 +139,7 @@ class rList(rObject):
 				raise TypeError("bad type: {}".format(type(x)))
 
 	def __bytes__(self):
-		bb = bytearray(4 + len(self.children))
+		bb = bytearray(4 + len(self.children) * 4)
 		offset = 0
 		for x in self.children:
 			struct.pack_into("<I", bb, offset, x.get_id())
