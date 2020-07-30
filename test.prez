@@ -1,0 +1,7 @@
+
+
+rCString(
+
+ "this is a long string with\r\n"
+ "extra characters and \\ stuff …"
+)
