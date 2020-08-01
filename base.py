@@ -15,6 +15,7 @@ __all__ = ["rObject", "rText", "rTextBlock", "rTextForLETextBox2",
 class rObject:
 	rName = None
 	rType = None
+	rRange = range(1,0x07FF0000)
 
 	_rmap = {}
 	_resources = {}
@@ -63,7 +64,7 @@ class rObject:
 		used.sort()
 
 
-		rr = range(1,0x07FEFFFF)
+		rr = self.rRange
 		if type(rID) == range:
 			rr = rID
 

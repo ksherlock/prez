@@ -35,8 +35,9 @@ _menu_item_ids = {}
 
 def _to_char_string(x):
 	if not x: return '""'
-	if x in (0x0a, 0x0d): return "\\n"
-	if x == ord('"'): return "\""
+	if x == 0x0d: return "\\n" # intentionally backwards
+	if x == 0x0a: return "\\r" #
+	if chr(x) in "\\\\'" : return "\\" + x
 	if x >= 32 and x < 0x7e: return '"' + chr(x) + '"'
 	return "\\${:02x}".format(x)
 
@@ -72,6 +73,7 @@ class rMenuBar(rObject):
 class rMenu(rObject):
 	rName = "rMenu"
 	rType = 0x8009
+	rRange = range(0x0001,0xffff)
 
 	# /*-------------------------------------------------------*/
 	# /* Equates for Menu Flags
@@ -147,6 +149,7 @@ miClose = 0xff
 class rMenuItem(rObject):
 	rName = "rMenuItem"
 	rType = 0x800a
+	rRange = range(0x100,0xffff)
 
 	# /* --------------------------------------------------*/
 	# /* flag word for menu item
