@@ -131,22 +131,22 @@ class rWindParam1(rObject):
 
 	def _rez_string(self):
 		return (
-			"\t${:04x}, /*frame bits */\n"
-			"\t${:08x}, /* title */\n"
-			"\t${:08x}, /* refCon */\n"
+			"\t0x{:04x}, /*frame bits */\n"
+			"\t0x{:08x}, /* title */\n"
+			"\t0x{:08x}, /* refCon */\n"
 			"\t{}, /* zoom rect */\n"
-			"\t${:08x}, /* color table */\n"
+			"\t0x{:08x}, /* color table */\n"
 			"\t{}, /* origin */\n"
 			"\t{}, /* data height/width */\n"
 			"\t{}, /* max height/width */\n"
 			"\t{}, /* scroll vert/horz */\n"
 			"\t{}, /* page vert/horz */\n"
-			"\t${:08x}, /* info refCon */\n"
+			"\t0x{:08x}, /* info refCon */\n"
 			"\t{:d}, /* info height */\n"
 			"\t{}, /* position */\n"
 			"\t{}, /* plane */\n"
-			"\t${:08x}, /* controlList */\n"
-			"\t${:04x}, /* verb */"
+			"\t0x{:08x}, /* controlList */\n"
+			"\t0x{:04x}, /* verb */"
 		).format(
 			self.frameBits,
 			self.title.get_id() if self.title else 0,

@@ -62,7 +62,7 @@ class rMenuBar(rObject):
 
 		rv = "\t{\n"
 		kiddos = [x.get_id() for x in self.children]
-		rv += ",\n".join(["\t\t${:08x}".format(x) for x in kiddos])
+		rv += ",\n".join(["\t\t0x{:08x}".format(x) for x in kiddos])
 		if kiddos: rv += "\n"
 		rv += "\t}"
 		return rv
@@ -122,13 +122,13 @@ class rMenu(rObject):
 		menuID = self.menuID
 		if menuID == None: menuID = self.get_id()
 		rv = (
-			"\t${:04x}, /* menu ID */\n"
-			"\t${:04x}, /* flags */\n"
-			"\t${:08x}, /* title ref */\n"
+			"\t0x{:04x}, /* menu ID */\n"
+			"\t0x{:04x}, /* flags */\n"
+			"\t0x{:08x}, /* title ref (rPString) */\n"
 		).format(menuID, self.flags, self.title.get_id())
 		rv += "\t{\n"
 		kiddos = [x.get_id() for x in self.children]
-		rv += ",\n".join(["\t\t${:08x}".format(x) for x in kiddos])
+		rv += ",\n".join(["\t\t0x{:08x}".format(x) for x in kiddos])
 		if kiddos: rv += "\n"
 		rv += "\t}"
 		return rv
@@ -226,11 +226,11 @@ class rMenuItem(rObject):
 		if itemID == None: itemID = self.get_id()
 
 		return (
-			"\t${:04x}, /* id */\n"
+			"\t0x{:04x}, /* id */\n"
 			"\t{}, {}, /* chars */\n"
-			"\t${:04x}, /* check */\n"
-			"\t${:04x}, /* flags */\n"
-			"\t${:04x} /* title ref */"
+			"\t0x{:04x}, /* check */\n"
+			"\t0x{:04x}, /* flags */\n"
+			"\t0x{:04x} /* title ref (rPString) */"
 		).format(
 			itemID,
 			_to_char_string(self.itemChar),

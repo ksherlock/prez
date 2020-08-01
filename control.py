@@ -126,15 +126,15 @@ class rSimpleButton(rControlTemplate):
 		if controlID == None: controlID = self.get_id()
 
 		rv = (
-			"\t${:08x}, /* control ID */\n"
+			"\t0x{:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
 			"\tSimpleButtonControl {{\n"
-			"\t\t${:04x}, /* flags */\n"
-			"\t\t${:04x}, /* more flags */\n"
-			"\t\t${:08x}, /* refcon */\n"
-			"\t\t${:08x}, /* title ref */\n"
-			"\t\t${:08x} /* color table ref */\n"
-			# "\t\t${}, /* key equiv */\n"
+			"\t\t0x{:04x}, /* flags */\n"
+			"\t\t0x{:04x}, /* more flags */\n"
+			"\t\t0x{:08x}, /* refcon */\n"
+			"\t\t0x{:08x}, /* title ref */\n"
+			"\t\t0x{:08x} /* color table ref */\n"
+			# "\t\t0x{}, /* key equiv */\n"
 			"\t}}"
 		).format(
 			controlID,
@@ -215,16 +215,16 @@ class rCheckControl(rControlTemplate):
 		if controlID == None: controlID = self.get_id()
 
 		rv = (
-			"\t${:08x}, /* control ID */\n"
+			"\t0x{:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
 			"\tCheckControl {{\n"
-			"\t\t${:04x}, /* flags */\n"
-			"\t\t${:04x}, /* more flags */\n"
-			"\t\t${:08x}, /* refcon */\n"
-			"\t\t${:08x}, /* title ref */\n"
-			"\t\t${:04x}, /* initial value */\n"
-			"\t\t${:08x} /* color table ref */\n"
-			# "\t\t${}, /* key equiv */\n"
+			"\t\t0x{:04x}, /* flags */\n"
+			"\t\t0x{:04x}, /* more flags */\n"
+			"\t\t0x{:08x}, /* refcon */\n"
+			"\t\t0x{:08x}, /* title ref */\n"
+			"\t\t0x{:04x}, /* initial value */\n"
+			"\t\t0x{:08x} /* color table ref */\n"
+			# "\t\t0x{}, /* key equiv */\n"
 			"\t}}"
 		).format(
 			controlID,
@@ -309,16 +309,16 @@ class rRadioControl(rControlTemplate):
 		if controlID == None: controlID = self.get_id()
 
 		rv = (
-			"\t${:08x}, /* control ID */\n"
+			"\t0x{:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
 			"\tRadioControl {{\n"
-			"\t\t${:04x}, /* flags */\n"
-			"\t\t${:04x}, /* more flags */\n"
-			"\t\t${:08x}, /* refcon */\n"
-			"\t\t${:08x}, /* title ref */\n"
-			"\t\t${:04x}, /* initial value */\n"
-			"\t\t${:08x} /* color table ref */\n"
-			# "\t\t${}, /* key equiv */\n"
+			"\t\t0x{:04x}, /* flags */\n"
+			"\t\t0x{:04x}, /* more flags */\n"
+			"\t\t0x{:08x}, /* refcon */\n"
+			"\t\t0x{:08x}, /* title ref */\n"
+			"\t\t0x{:04x}, /* initial value */\n"
+			"\t\t0x{:08x} /* color table ref */\n"
+			# "\t\t0x{}, /* key equiv */\n"
 			"\t}}"
 		).format(
 			controlID,
@@ -409,16 +409,16 @@ class rThermometerControl(rControlTemplate):
 		if controlID == None: controlID = self.get_id()
 
 		rv = (
-			"\t${:08x}, /* control ID */\n"
+			"\t0x{:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
 			"\tThermometerControl {{\n"
-			"\t\t${:04x}, /* flags */\n"
-			"\t\t${:04x}, /* more flags */\n"
-			"\t\t${:08x}, /* refcon */\n"
-			"\t\t${:04x}, /* value */\n"
-			"\t\t${:04x}, /* scale */\n"
-			"\t\t${:08x} /* color table ref */\n"
-			# "\t\t${}, /* key equiv */\n"
+			"\t\t0x{:04x}, /* flags */\n"
+			"\t\t0x{:04x}, /* more flags */\n"
+			"\t\t0x{:08x}, /* refcon */\n"
+			"\t\t0x{:04x}, /* value */\n"
+			"\t\t0x{:04x}, /* scale */\n"
+			"\t\t0x{:08x} /* color table ref */\n"
+			# "\t\t0x{}, /* key equiv */\n"
 			"\t}}"
 		).format(
 			controlID,
@@ -506,14 +506,14 @@ class rRectangleControl(rControlTemplate):
 
 		# penmask / pen pattern not yet supported.
 		rv = (
-			"\t${:08x}, /* control ID */\n"
+			"\t0x{:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
 			"\tRectangleControl {{\n"
-			"\t\t${:04x}, /* flags */\n"
-			"\t\t${:04x}, /* more flags */\n"
-			"\t\t${:08x}, /* refcon */\n"
-			"\t\t${:04x}, /* pen height */\n"
-			"\t\t${:04x}, /* pen width */\n"
+			"\t\t0x{:04x}, /* flags */\n"
+			"\t\t0x{:04x}, /* more flags */\n"
+			"\t\t0x{:08x}, /* refcon */\n"
+			"\t\t0x{:04x}, /* pen height */\n"
+			"\t\t0x{:04x}, /* pen width */\n"
 			"\t}}"
 		).format(
 			controlID,
@@ -622,14 +622,14 @@ class rStatTextControl(rControlTemplate):
 
 		# penmask / pen pattern not yet supported.
 		rv = (
-			"\t${:08x}, /* control ID */\n"
+			"\t0x{:08x}, /* control ID */\n"
 			"\t{}, /* rect */\n"
 			"\tStatTextControl {{\n"
-			"\t\t${:04x}, /* flags */\n"
-			"\t\t${:04x}, /* more flags */\n"
-			"\t\t${:08x}, /* refcon */\n"
-			"\t\t${:08x}, /* text ref (rTextForLETextBox2) */\n"
-			"\t\t${:04x}, /* text size */\n"
+			"\t\t0x{:04x}, /* flags */\n"
+			"\t\t0x{:04x}, /* more flags */\n"
+			"\t\t0x{:08x}, /* refcon */\n"
+			"\t\t0x{:08x}, /* text ref (rTextForLETextBox2) */\n"
+			"\t\t0x{:04x}, /* text size */\n"
 			"\t\t{:d}, /* text justification */\n"
 			"\t}}"
 		).format(

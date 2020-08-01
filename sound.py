@@ -184,9 +184,9 @@ class rSoundSample(rObject):
 		return (
 			"\t0, /* format */\n"
 			"\t{}, /* size (pages) */\n"
-			"\t${:04x}, /* relative pitch */\n"
-			"\t${:04x}, /* stereo channel */\n"
-			"\t${:u}, /* sample rate */\n"
+			"\t0x{:04x}, /* relative pitch */\n"
+			"\t0x{:04x}, /* stereo channel */\n"
+			"\t0x{:u}, /* sample rate */\n"
 			"\t..."
 			).format(
 				self.pages,
