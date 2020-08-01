@@ -2,43 +2,6 @@
 
 __all__ = ['point', 'rect', 'size']
 
-def all_defined(*args): return args.count(None)==0
-def all_none(*args): return args.count(None)==len(args)
-def is_listy(x): type(x) in (tuple, list)
-
-# def point(a=None, b=None, *, x=None, y=None, h=None, v=None):
-#   if all_defined(h,v): return (v, h)
-#   if all_defined(x,y): return (y, x)
-#   if type(a) in (tuple, list):
-#     if len(a) == 2 and b is None: return tuple(a)
-#     raise ValueError("bad parameter")
-#   if all_defined(a,b): return (a, b)
-#   raise ValueError("bad parameter")
-
-
-# rect (v1, h1, v2, h2)
-# rect( (0,0), (10,10) )
-# rect (x=, y=, height=, width=)
-# def rect(a=None, b=None, c=None, d=None, *,
-# 	x=None,y=None,height=None,width=None,
-# 	h1=None,h2=None,v1=None,v2=None):
-
-#   if all_defined(x,y,height,width):
-#   	return (y, x, y + height, x + width)
-#   if all_defined(h1,h2,v1,v2):
-#   	return (v1, h2, v2, h2)
-
-#   if type(a) in (tuple,list):
-#   	if len(a) == 4: return tuple(a)
-#   	if type(b) in (tuple, list):
-#   		if len(a) == 2 and len(b) == 2:
-#   			return (*a, *b)
-#   	raise ValueError("bad parameter")
-
-#   if all_defined(a,b,c,d): return (a, b, c, d)
-#   raise ValueError("bad parameter")
-
-
 
 # struct Point {
 #    short v;
@@ -51,6 +14,10 @@ def is_listy(x): type(x) in (tuple, list)
 #    short v2;
 #    short h2;
 #    };
+
+def all_defined(*args): return args.count(None)==0
+def all_none(*args): return args.count(None)==len(args)
+def is_listy(x): type(x) in (tuple, list)
 
 
 def point(*args, x=None, y=None, h=None, v=None):
