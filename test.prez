@@ -5,3 +5,8 @@ rCString(
  "this is a long string with\r\n"
  "extra characters and \\ stuff …"
 )
+
+rMenu(" Edit ",
+	UndoMenuItem().export("kUndoMenuItem"),
+	UndoMenuItem()
+).name("Edit Menu")
