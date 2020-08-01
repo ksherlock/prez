@@ -6,6 +6,8 @@ from control import *
 from menu import *
 from rect import rect, point, size
 
+from sound import *
+
 rPString("hello")
 rCString("goodbye")
 
@@ -52,6 +54,8 @@ rTextBlock(
 	id = range(10,20)
 )
 
+UndoMenuItem()
+UndoMenuItem()
 
-rObject.dumphex()
-rObject.dumprez()
+rObject.dump_hex()
+rObject.dump_rez()

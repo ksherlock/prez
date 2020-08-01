@@ -61,5 +61,7 @@ if __name__ == '__main__':
 
         print("/* Generated on {} */".format(time.ctime()))
         print('#include "types.rez"\n')
-        rObject.dumprez()
+        rObject.dump_rez()
+
+        rObject.dump_exports()
         sys.exit(0)

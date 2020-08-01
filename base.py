@@ -19,12 +19,15 @@ class rObject:
 
 	_rmap = {}
 	_resources = {}
+	_rnames = {}
 
 	# also a define=property to trigger export in equ file?
 	def __init__(self, id=None, attr=None):
 		rType = self.rType
 		self.id = id
 		self.attr = attr
+		self._export = None
+		self._name = None
 
 		self._check_id(rType, id)
 
@@ -47,6 +50,26 @@ class rObject:
 			if rID in xx:
 				raise ValueError("{} (${:04x}) ${:08x} already defined".format(self.rName, rType, rID))
 
+
+	def name(self, name):
+		if not name: return
+
+		self._name = name
+
+		rType = self.rType
+		if self.rType in self._rnames:
+			r = self._rnames[rType]
+		else:
+			r = rResName(id = 0x00010000 + rType)
+			self._rnames[rType] = r
+
+		r.add(self)
+
+		return self
+
+	def export(self, name):
+		self._export = name
+		return self
 
 	def get_id(self):
 		rID = self.id
@@ -90,6 +113,22 @@ class rObject:
 		# return self.id
 
 	@staticmethod
+	def dump_exports(type="c"):
+		type = type.lower()
+		if type not in ("c", "equ", "gequ"): return
+
+		fmt = {
+			"c": "#define {} 0x{:08x}",
+			"equ": "{} equ ${:08x}",
+			"gequ": "{} gequ ${:08x}",
+		}[type]
+
+		for rType,rList in rObject._resources.items():
+			for r in rList:
+				if r._export:
+					print(fmt.format(r._export, r.get_id()))
+
+	@staticmethod
 	def dump():
 		for rType,rList in rObject._resources.items():
 			for r in rList:
@@ -97,7 +136,7 @@ class rObject:
 
 
 	@staticmethod
-	def dumphex():
+	def dump_hex():
 		for rType,rList in rObject._resources.items():
 			for r in rList:
 				bb = bytes(r)
@@ -110,7 +149,7 @@ class rObject:
 				print("}\n")
 
 	@staticmethod
-	def dumprez():
+	def dump_rez():
 		for rType,rList in rObject._resources.items():
 			for r in rList:
 				content = r._rez_string()
@@ -120,7 +159,7 @@ class rObject:
 				print("}\n")
 
 # container for a 0-terminated list of resource ids.
-
+# NOT EXPORTED BY DEFAULT
 class rList(rObject):
 	def __init__(self, *children, id=None, attr=None):
 		super().__init__(id=id, attr=attr)
@@ -144,36 +183,55 @@ class rList(rObject):
 
 		ids = [x.get_id() for x in self.children]
 
-		rv += ",\n".join(["\t\t${:08x}".format(x) for x in ids])
+		rv += ",\n".join(["\t\t0x{:08x}".format(x) for x in ids])
 
 		rv += "\n\t}"
 		return rv
 
+# NOT EXPORTED BY DEFAULT
+# id = 0x0001xxxx where xxxx = resource type
+#
+class rResName(rObject):
+	rName = "rResName"
+	rType = 0x8014
 
-def _generate_map():
-	map = { x: "\\${:02x}".format(x) for x in range(0, 256) if x < 32 or x > 126 }
-	map[0x0d] = "\\n" # intentionally backwards.
-	map[0x0a] = "\\r" # intentionally backwards.
-	map[0x09] = "\\t"
-	# \b \f \v \? also supported. 
-	map[ord('"')] = '\\"'
-	map[ord("'")] = "\\'"
-	map[ord("\\")] = "\\\\"
-	# map[0x7f] = "\\?" # rubout
+	def __init__(self, id=None, attr=None):
+		super().__init__(id=id, attr=attr)
+		self.children = []
 
-	return map
+	def add(self, r):
+		self.children.append(r)
+
+	def __bytes__(self):
+		count = len(self.children)
+		bb = struct.pack("<HI",
+			1, # version
+			count
+		)
+		for x in self.children:
+			name = str_to_bytes(x._name)
+			id = x.get_id()
+			bb += struct.pack("<IB", id, len(name))
+			bb + str_to_bytes(name)
+
+		return bb
+
+	def _rez_string(self):
+		rv = "\t1, /* version */\n\t{\n"
+
+		tmp = [
+			"\t\t0x{:08x},\n\t\t{}".format(
+				x.get_id(), format_string(str_to_bytes(x._name))
+			)
+			for x in self.children
+		]
+
+		rv += ",\n".join(tmp)
+		rv += "\n\t}"
+		return rv
+
 
 class rTextObject(rObject):
-	# _map = { x: "\\${:02x}".format(x) for x in range(0, 256) if x < 32 or x > 126 }
-
-
-
-	_map = _generate_map()
-
-	@staticmethod
-	def _encode(bb):
-		map = rTextObject._map
-		return "".join([map[x] if x in map else chr(x) for x in bb])
 
 	@classmethod
 	def make_string(cls, text):
@@ -191,25 +249,19 @@ class rTextObject(rObject):
 		super().__init__(id=id, attr=attr)
 		# text is a string or bytes.
 		# bytes is assumed to be macroman
-		self.text = text
-		self._text = str_to_bytes(text)
+		self.text = str_to_bytes(text)
 
 	def __len__(self):
-		return len(self._text)
+		return len(self.text)
 
 	def __bytes__(self):
-		return self._text
+		return self.text
 
 	def _rez_string(self):
 
-		if not self._text: return '\t""\n'
+		if not self.text: return '\t""\n'
 
-		bb = self._text
-		data = [bb[x*32:x*32+32] for x in range(0, len(bb)+31>>5)]
-
-		rv = ""
-		rv = "\n".join(['\t"' + self._encode(x) + '"' for x in data])
-		return rv
+		return multi_format_string(self.text, "\t")
 
 
 class rText(rTextObject):
@@ -276,15 +328,21 @@ class rStringList(rObject):
 
 	def __init__(self, strings, *, id=None, attr=None):
 		super().__init__(id, attr)
-		self.strings = strings[:]
-		self._strings = [str_to_bytes(x) for x in strings]
+		self.children = [str_to_bytes(x) for x in strings]
 
 	def __bytes__(self):
 		bb = struct.pack("<H", len(self._strings))
-		for x in self._strings:
+		for x in self.children:
+			bb += bytes( [len(x)] ) # pstring
 			bb += x
 		return bb
 
+	def _rez_string(self):
+		rv = "\t{\n"
+		rv += ",\n".join([format_string_multi(x) for x in self.children])
+		if self.children: rv += "\n"
+		rv += "\t}"
+		return rv
 
 
 
