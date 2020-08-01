@@ -72,14 +72,14 @@ def open_audio(file):
 
 
 class rSoundSample(rObject):
-		"""
-		filename: input file to read. format is .wav, .au, .aiff, or .aifc
-		pitch: audio pitch, if this is a note. specify hz (eg 261.63) or name (eg c4)
-		rate: down/upsample audio to this rate (eg 26320)
-		channel: stereo channel 
+	"""
+	filename: input file to read. format is .wav, .au, .aiff, or .aifc
+	pitch: audio pitch, if this is a note. specify hz (eg 261.63) or name (eg c4)
+	rate: down/upsample audio to this rate (eg 26320)
+	channel: stereo channel 
 
-		Native samples are 26320 khz, c4 (261.63 hz)
-		"""
+	Native samples are 26320 khz, c4 (261.63 hz)
+	"""
 
 	rName = "rSoundSample"
 	rType = 0x8024

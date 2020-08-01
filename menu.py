@@ -1,15 +1,44 @@
 
 from base import *
+from utils import *
 import struct
 
-__all__ = ['rMenuBar', 'rMenu', 'rMenuItem']
+__all__ = [
+	'rMenuBar',
+	'rMenu',
+	'rMenuItem',
 
-def to_char_string(x):
+	'UndoMenuItem',
+	'CutMenuItem',
+	'CopyMenuItem',
+	'PasteMenuItem',
+	'ClearMenuItem',
+	'CloseMenuItem',
+	'DividerMenuItem'
+]
+
+# see:
+# Programmer's Reference for System 6 (Ch 13 Menu Manager Update, pg 103+)
+# TB Vol 3 Chapter 37
+# TB Vol 1 Chapter 13
+
+# TODO - menu item icon support (system 6) rItemStruct
+
+# A menu ID must be unique for each menu; that is, no two menus
+# can have the same ID or the system will fall. Similarly, no two
+# items can have the same Item ID.
+
+_menu_ids = {}
+_menu_item_ids = {}
+
+
+
+def _to_char_string(x):
 	if not x: return '""'
 	if x in (0x0a, 0x0d): return "\\n"
 	if x == ord('"'): return "\""
 	if x >= 32 and x < 0x7e: return '"' + chr(x) + '"'
-	return "\\x{:02x}".format(x)
+	return "\\${:02x}".format(x)
 
 class rMenuBar(rObject):
 	rName = "rMenuBar"
@@ -39,7 +68,7 @@ class rMenuBar(rObject):
 		return rv
 
 
-
+# valid menu ids: $0001-$fffe
 class rMenu(rObject):
 	rName = "rMenu"
 	rType = 0x8009
@@ -59,7 +88,7 @@ class rMenu(rObject):
 		**kwargs
 		):
 		super().__init__(id, attr)
-		self.title = make_string(title, rPString)
+		self.title = rPString.make_string(title)
 		self.children = children[:]
 		self.menuID = menuID
 
@@ -105,6 +134,16 @@ class rMenu(rObject):
 		return rv
 
 
+miUndo = 0xfa
+miCut = 0xfb
+miCopy = 0xfc
+miPaste = 0xfd
+miClear = 0xfe
+miClose = 0xff
+
+
+# valid menu item ids: $0100-$fffe
+
 class rMenuItem(rObject):
 	rName = "rMenuItem"
 	rType = 0x800a
@@ -130,7 +169,7 @@ class rMenuItem(rObject):
 		**kwargs):
 		super().__init__(id, attr)
 
-		self.title = make_string(title, rPString)
+		self.title = rPString.make_string(title)
 
 		flags |= 0x8000 # title ref is resource
 		if kwargs.get("bold"): flags |= 0x0001
@@ -141,6 +180,9 @@ class rMenuItem(rObject):
 		if kwargs.get("disabled"): flags |= 0x0080
 		if kwargs.get("outline"): flags |= 0x0800
 		if kwargs.get("shadow"): flags |= 0x1000
+
+		# bit 15 of flags set if title ref is actually an
+		# item struct ref.
 
 		self.flags = flags
 
@@ -191,10 +233,58 @@ class rMenuItem(rObject):
 			"\t${:04x} /* title ref */"
 		).format(
 			itemID,
-			to_char_string(self.itemChar),
-			to_char_string(self.altItemChar),
+			_to_char_string(self.itemChar),
+			_to_char_string(self.altItemChar),
 			self.checkMark,
 			self.flags,
 			self.title.get_id()
 		)
 
+
+def _singleton(func):
+	value = None
+	def inner():
+		nonlocal value
+		if not value: value = func()
+		return value
+	return inner
+
+
+def DividerMenuItem():
+	return rMenuItem("-", flags = 0x0080) # disabled
+
+def EditMenu(*children, **kwargs):
+	return rMenu("  Edit  ", 
+		UndoMenuItem(),
+		CutMenuItem(),
+		CopyMenuItem(),
+		PasteMenuItem(),
+		ClearMenuItem(),
+		*children,
+		**kwargs
+	)
+
+@ _singleton
+def UndoMenuItem():
+	# normally underlined....
+	return rMenuItem("Undo", "Zz", itemID = miUndo)
+
+@ _singleton
+def CutMenuItem():
+	return rMenuItem("Cut", "Xx", itemID = miCut)
+
+@ _singleton
+def CopyMenuItem():
+	return rMenuItem("Copy", "Cc", itemID = miCopy)
+
+@ _singleton
+def PasteMenuItem():
+	return rMenuItem("Paste", "Vv", itemID = miPaste)
+
+@ _singleton
+def ClearMenuItem():
+	return rMenuItem("Clear", "", itemID = miClear)
+
+@ _singleton
+def CloseMenuItem():
+	return rMenuItem("Close", "Ww", itemID = miClose)

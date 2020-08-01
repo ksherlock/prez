@@ -1,21 +1,12 @@
 import struct
 from bisect import bisect_left
 from rect import *
+from utils import *
 
-# helper functions
-def str_to_bytes(text):
-	if isinstance(text, str): return text.encode("macroman")
-	if isinstance(text, bytes): return text
-	if isinstance(text, bytearray): return bytes(text)
-	raise TypeError("Bad text type: {}".format(type(text)))
-
-
-def make_string(text, rType=None):
-	if not rType: rType = rPString
-	if type(text) == rType: return text
-	if type(text) in (str, bytes, bytearray): return rType(text)
-	raise TypeError("Bad text type: {}".format(type(text)))
-
+__all__ = ["rObject", "rText", "rTextBlock", "rTextForLETextBox2", 
+	"rAlertString", "rErrorString", "rComment", "rPString", 
+	"rCString", "rWString", "rC1InputString", "rStringList",
+	"rTwoRects", "rRectList"]
 
 #define KeyEquiv  array[1]{ char; char; _mybase_ word; _mybase_ word; }
 
@@ -182,6 +173,16 @@ class rTextObject(rObject):
 	def _encode(bb):
 		map = rTextObject._map
 		return "".join([map[x] if x in map else chr(x) for x in bb])
+
+	@classmethod
+	def make_string(cls, text):
+		rType = cls
+		# if not rType: rType = rPString
+		if type(text) == rType: return text
+		if type(text) in (str, bytes, bytearray): return rType(text)
+		raise TypeError("Bad text type: {}".format(type(text)))
+
+
 
 
 

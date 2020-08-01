@@ -1,5 +1,6 @@
 from base import *
 from control import rControlTemplate, rControlList
+from utils import *
 
 import struct
 
@@ -57,7 +58,7 @@ class rWindParam1(rObject):
 		super().__init__(id=id, attr=attr)
 
 		self.frameBits = frameBits
-		if title: self.title = make_string(title)
+		if title: self.title = rPString.make_string(title)
 		self.zoomRect=zoomRect
 		self.color = None
 		self.origin = origin

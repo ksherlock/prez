@@ -1,10 +1,15 @@
-from base import *
+from base import rObject, rList, rPString, rTextForLETextBox2
 import struct
 from rect import *
 from colors import *
+from utils import *
 
 
-
+__all__ = [
+	"rControlTemplate", "rControlList", "rSimpleButton",
+	"rCheckControl", "rRadioControl", "rThermometerControl",
+	"rRectangleControl", "rStatTextControl"
+]
 
 # /*-------------------------------------------------------*/
 # /* Control List Descriptors
@@ -25,7 +30,7 @@ from colors import *
 # /*-------------------------------------------------------*/
 # #define ctlInvis            $0080
 # #define ctlVisible          $0000
-# #Define CtlInactive         $FF00#
+# #Define CtlInactive         $FF00
 #
 #
 # /*-------------------------------------------------------*/
@@ -87,7 +92,7 @@ class rSimpleButton(rControlTemplate):
 		if title:
 			moreFlags |= 0x02 # title is resource id
 
-		self.title = make_string(title)
+		self.title = rPString.make_string(title)
 
 		self.flags = flags
 		self.moreFlags = moreFlags
@@ -175,7 +180,7 @@ class rCheckControl(rControlTemplate):
 		if title:
 			moreFlags |= 0x02 # title is resource id
 
-		self.title = make_string(title)
+		self.title = rPString.make_string(title)
 
 		self.flags = flags
 		self.moreFlags = moreFlags
@@ -269,7 +274,7 @@ class rRadioControl(rControlTemplate):
 		if title:
 			moreFlags |= 0x02 # title is resource id
 
-		self.title = make_string(title)
+		self.title = rPString.make_string(title)
 
 		self.flags = flags
 		self.moreFlags = moreFlags
@@ -577,7 +582,7 @@ class rStatTextControl(rControlTemplate):
 		elif fullJust: just = 2
 		elif rightJust: just = -1
 
-		self.text = make_string(text, rTextForLETextBox2)
+		self.text = rTextForLETextBox2.make_string(text)
 
 		self.flags = flags
 		self.moreFlags = moreFlags
