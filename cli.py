@@ -15,16 +15,19 @@ from base import rObject
 
 
 def rez_scope():
+	# import all the resource types and constants into
+	# a dictionary to be the exec() local scope
 	import base
 	import window
 	import control
 	import menu
 	import sound
 	import rect
+	import constants
 
+	# could do: mod = importlib.import_module("base"), etc.
 	scope = {}
-	for mod in (base, window, control, menu, sound, rect):
-
+	for mod in (base, window, control, menu, sound, rect, constants):
 		if hasattr(mod, '__all__'): keys = mod.__all__
 		else: keys = [x for x in dir(mod) if x[0] != '_']
 
@@ -35,8 +38,7 @@ def rez_scope():
 
 		
 
-def execute(filename):
-	scope = rez_scope()
+def execute(filename, scope):
 	try:
 		with open(filename, 'r', encoding="utf-8") as f:
 			src = f.read()
@@ -49,19 +51,23 @@ def execute(filename):
 		return False
 
 if __name__ == '__main__':
-        p = argparse.ArgumentParser(prog='prez')
-        p.add_argument('files', metavar='file', type=str, nargs='+')
-        p.add_argument('--rez', action='store_true',
-        	help="Generate REZ code")
-        opts = p.parse_args()
+	p = argparse.ArgumentParser(prog='prez')
+	p.add_argument('files', metavar='file', type=str, nargs='+')
+	p.add_argument('--rez', action='store_true', help="Generate REZ code")
+	p.add_argument('-D', type=str, nargs='+', help='define a variable')
+	p.add_argument('--df', action="store_true", help="Write to a regular file")
+	p.add_argument('-o', metavar='file', type=str, help="Specify output file")
 
-        for f in opts.files:
-        	ok = execute(f)
+	opts = p.parse_args()
+
+	scope = rez_scope()
+	for f in opts.files:
+		ok = execute(f, scope)
 
 
-        print("/* Generated on {} */".format(time.ctime()))
-        print('#include "types.rez"\n')
-        rObject.dump_rez()
+	print("/* Generated on {} */".format(time.ctime()))
+	print('#include "types.rez"\n')
+	rObject.dump_rez()
 
-        rObject.dump_exports()
-        sys.exit(0)
+	rObject.dump_exports()
+	sys.exit(0)
