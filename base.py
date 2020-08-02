@@ -198,7 +198,7 @@ class rObject:
 
 				data = [bb[x*16:x*16+16] for x in range(0, len(bb)+15>>4)]
 
-				print("data {}(${:08x}{}) {{".format(
+				print("data {}(0x{:08x}{}) {{".format(
 					r.rName, r.get_id(), r._format_attr()
 				), file=io)
 				for x in data:
@@ -211,7 +211,7 @@ class rObject:
 			for r in rList:
 				content = r._rez_string()
 
-				print("resource {}(${:08x}{}) {{".format(
+				print("resource {}(0x{:08x}{}) {{".format(
 					r.rName, r.get_id(), r._format_attr()
 				), file=io)
 				print(content, file=io)
