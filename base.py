@@ -293,7 +293,7 @@ class rResName(rObject):
 			name = str_to_bytes(x._name)
 			id = x.get_id()
 			bb += struct.pack("<IB", id, len(name))
-			bb + str_to_bytes(name)
+			bb += str_to_bytes(name)
 
 		return bb
 
