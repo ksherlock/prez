@@ -57,6 +57,8 @@ if __name__ == '__main__':
 	p = argparse.ArgumentParser(prog='prez')
 	p.add_argument('files', metavar='file', type=str, nargs='+')
 	p.add_argument('--rez', action='store_true', help="Generate REZ code")
+	p.add_argument('-x', action="store_true", help="Generate REZ data")
+
 	p.add_argument('-D', type=str, nargs='+', help='define a variable')
 	p.add_argument('--df', action="store_true", help="Write to a regular file")
 	p.add_argument('-o', metavar='file', type=str, help="Specify output file")
@@ -76,6 +78,7 @@ if __name__ == '__main__':
 	if errors > 0 : sys.exit(1)
 
 	if not opts.o: opts.rez = True
+	if opts.x: opts.rez = True
 
 	if df or opts.rez:
 		open_rfork = io.open
@@ -83,7 +86,8 @@ if __name__ == '__main__':
 	if opts.rez:
 		print("/* Generated on {} */".format(time.ctime()))
 		print('#include "types.rez"\n')
-		rObject.dump_rez()
+		if opts.x: rObject.dump_hex()
+		else: rObject.dump_rez()
 	else:
 		with open_rfork(opts.o, "wb") as io:
 			rObject.save_resources(io)
