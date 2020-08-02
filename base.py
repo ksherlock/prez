@@ -2,6 +2,9 @@ import struct
 from bisect import bisect_left
 from rect import *
 from utils import *
+import sys
+
+from resource_writer import ResourceWriter
 
 from constants import *
 
@@ -147,7 +150,7 @@ class rObject:
 		# return self.id
 
 	@staticmethod
-	def dump_exports(type="c"):
+	def dump_exports(type="c", io=None):
 		type = type.lower()
 		if type not in ("c", "equ", "gequ"): return
 
@@ -160,7 +163,7 @@ class rObject:
 		for rType,rList in rObject._resources.items():
 			for r in rList:
 				if r._export:
-					print(fmt.format(r._export, r.get_id()))
+					print(fmt.format(r._export, r.get_id()), file=io)
 
 	def _format_attr(self):
 		attr = self._attr
@@ -181,14 +184,14 @@ class rObject:
 		return ", ".join(opts)
 
 	@staticmethod
-	def dump():
+	def dump(io=None):
 		for rType,rList in rObject._resources.items():
 			for r in rList:
-				print("${:04x} {} - ${:08x}".format(rType, r.rName, r.get_id()))
+				print("${:04x} {} - ${:08x}".format(rType, r.rName, r.get_id()), file=io)
 
 
 	@staticmethod
-	def dump_hex():
+	def dump_hex(io=None):
 		for rType,rList in rObject._resources.items():
 			for r in rList:
 				bb = bytes(r)
@@ -197,22 +200,44 @@ class rObject:
 
 				print("{}(${:08x}{}) {{".format(
 					r.rName, r.get_id(), r._format_attr()
-				))
+				), file=io)
 				for x in data:
-					print("\t$\"" + x.hex() + "\"")
-				print("}\n")
+					print("\t$\"" + x.hex() + "\"", file=io)
+				print("}\n", file=io)
 
 	@staticmethod
-	def dump_rez():
+	def dump_rez(io=None):
 		for rType,rList in rObject._resources.items():
 			for r in rList:
 				content = r._rez_string()
 
 				print("{}(${:08x}{}) {{".format(
 					r.rName, r.get_id(), r._format_attr()
-				))
-				print(content)
-				print("}\n")
+				), file=io)
+				print(content, file=io)
+				print("}\n", file=io)
+
+
+	@staticmethod
+	def save_resource(io):
+		rw = ResourceWriter()
+
+		for rType,rList in rObject._resources.items():
+			if rType == 0x8014: continue # rResName handled via rw
+
+			for r in rList:
+
+				rw.add_resource(
+					rType,
+					r.get_id(),
+					bytes(r),
+					attr = r._attr,
+					name = r._name
+				)
+
+		rw.write(io)
+
+
 
 # container for a 0-terminated list of resource ids.
 # NOT EXPORTED BY DEFAULT
