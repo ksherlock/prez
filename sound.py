@@ -4,6 +4,7 @@ import audioop
 import struct
 import re
 import sys
+import os
 from math import log2
 
 __all__ = ["rSoundSample"]
@@ -34,7 +35,7 @@ def pitch_to_hz(p):
 	if p == None: return 261.63
 	if type(p) in (int, float): return float(p)
 	if type(p) == str:
-		m = re.match("^([A-Ga-g])([#b])?([0-8])$", x)
+		m = re.match("^([A-Ga-g])([#b])?([0-8])$", p)
 		if not m: return None
 		note = m1[1].upper(); accidental = m[2]; octave = int(m[3])
 
@@ -84,13 +85,13 @@ class rSoundSample(rObject):
 	rName = "rSoundSample"
 	rType = 0x8024
 
-	def __init__(filename, pitch=None, rate=None, channel=0, **kwargs):
+	def __init__(self, filename, pitch=None, rate=None, channel=0, **kwargs):
 
 		super().__init__(**kwargs)
 
 		new_rate = rate
 		freq = pitch_to_hz(pitch)
-		if not freq: raise ValueException("Invalid pitch: {}".format(pitch))
+		if not freq: raise ValueError("Invalid pitch: {}".format(pitch))
 
 		# audio conversion
 
@@ -163,7 +164,7 @@ class rSoundSample(rObject):
 			hz # hz
 		)
 
-		self.data = rv
+		self.data = bytes(rv)
 		self.pages = pages
 		self.channel = channel
 		self.relative_pitch = rp
@@ -186,7 +187,7 @@ class rSoundSample(rObject):
 			"\t{}, /* size (pages) */\n"
 			"\t0x{:04x}, /* relative pitch */\n"
 			"\t0x{:04x}, /* stereo channel */\n"
-			"\t0x{:u}, /* sample rate */\n"
+			"\t{:d}, /* sample rate */\n"
 			"\t..."
 			).format(
 				self.pages,

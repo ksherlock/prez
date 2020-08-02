@@ -1,0 +1,5 @@
+
+#
+# load from a file, downsample to 26320 hz
+#
+rSoundSample("tambourine.wav", name="Tambourine", rate=26320)
