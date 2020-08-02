@@ -7,6 +7,12 @@ import re
 
 __all__ = ["rVersion"]
 
+
+#
+# See: IIgs Technote #76 Miscellaneous Resource Formats
+# See: IIgs TechNote #100 VersionVille
+#
+
 class Region(enum.Enum):
 
 	verUS = 0
