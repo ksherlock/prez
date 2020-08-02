@@ -1,0 +1,17 @@
+#
+#
+#
+
+rTwoRects(
+	(5, 5, 10, 20),
+	(5,5,10,40)
+)
+
+rRectList(
+	[2, 4, 15, 24],
+	(2, 4, 15, 24),
+	rect(x = 4, y = 2, height = 13, width = 20),
+	rect(point(x=4, y = 2), point(x = 4+20, y = 2 + 13)),
+	rect(h1 = 4, v1 = 2, h2 = 4 + 20, v2 = 2 + 13),
+	rect(top=2, left=4, right=4+20, bottom = 2 + 13)
+)
