@@ -4,6 +4,7 @@ import io
 import argparse
 import time
 from open_rfork import open_rfork
+import traceback
 
 from base import rObject
 
@@ -49,6 +50,7 @@ def execute(filename, scope):
 		pass
 	except Exception as e:
 		print(e)
+		print(traceback.format_exc())
 		return False
 
 if __name__ == '__main__':
