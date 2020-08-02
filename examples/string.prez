@@ -1,0 +1,28 @@
+#
+# text can be a python string or a bytes object.
+# strings are assumed to be utf-8 encoded and will be converted to macroman
+# bytes are left as-is
+#
+# n.b. - in Rez, \r and \n are reversed.
+# In prez, they have their standard (python) meaning.
+#
+
+rText("rText")
+rTextBlock(b"rTextBlock") # bytes 
+rTextForLETextBox2("rTextForLETextBox2")
+rAlertString("rAlertString")
+rErrorString("rErrorString")
+
+
+from textwrap import dedent
+rComment(dedent("""
+	rComment
+
+	multi-line python string.
+""")) # remove leading space from the mult-line string.
+rPString("rPString")
+rCString("rCString")
+rWString("rWString")
+rC1InputString("rC1InputString")
+
+rStringList('rStringList', b"rStringList", r"rStringList")

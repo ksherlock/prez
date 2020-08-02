@@ -406,7 +406,7 @@ class rStringList(rObject):
 	rName = "rStringList"
 	rType = 0x8007
 
-	def __init__(self, strings, **kwargs):
+	def __init__(self, *strings, **kwargs):
 		super().__init__(**kwargs)
 		self.children = [str_to_bytes(x) for x in strings]
 
@@ -419,7 +419,7 @@ class rStringList(rObject):
 
 	def _rez_string(self):
 		rv = "\t{\n"
-		rv += ",\n".join([format_string_multi(x) for x in self.children])
+		rv += ",\n".join([multi_format_string(x, "\t\t") for x in self.children])
 		if self.children: rv += "\n"
 		rv += "\t}"
 		return rv
