@@ -1,12 +1,53 @@
 
 
-rCString(
+# rCString(
 
- "this is a long string with\r\n"
- "extra characters and \\ stuff …"
+#  "this is a long string with\r\n"
+#  "extra characters and \\ stuff …"
+# )
+
+
+# rAlertString(" alert message", id=1, attrNoSpec = True, export="rAlert", name="Alert 1")
+
+# rMenu(" Edit ",
+# 	UndoMenuItem().export("kUndoMenuItem"),
+# 	UndoMenuItem()
+# ).name("Edit Menu")
+
+
+# rToolStartup(
+# 	1,2,3,4, (5,6),
+# 	mode=640
+# )
+
+
+rMenuBar(
+	rMenu(" @ ",
+		rMenuItem("About My App…", export="kAboutMenuItem"),
+		rMenuItem("Preferences…", ",", export="kPreferencesMenuItem")
+	),
+	rMenu(" File ",
+		rMenuItem("New ", "Nn", export="kNewMenuItem"),
+		rMenuItem("Open…", "Oo", export="kOpenMenuItem"),
+		rMenuItem("Save", "Ss", disabled=True, export="kSaveMenuItem"),
+		DividerMenuItem(),
+		rMenuItem("Close", "Ww", id=0xff, export="kCloseMenuItem"),
+		export = "kFileMenu"
+	),
+	rMenu(" Edit ",
+		UndoMenuItem(), # shortcut for doing it manually,
+		DividerMenuItem(),
+		CutMenuItem(),
+		CopyMenuItem(),
+		PasteMenuItem(),
+		ClearMenuItem(),
+		export = "kEditMenu"
+	),
+	export = "kMenuBar"
 )
 
-rMenu(" Edit ",
-	UndoMenuItem().export("kUndoMenuItem"),
-	UndoMenuItem()
-).name("Edit Menu")
+rComment(
+	"This is a comment.\r\r"
+	"So there.",
+	id = 1
+)
