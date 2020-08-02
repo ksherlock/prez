@@ -3,6 +3,7 @@ import sys
 import io
 import argparse
 import time
+from open_rfork import open_rfork
 
 from base import rObject
 
@@ -60,14 +61,30 @@ if __name__ == '__main__':
 
 	opts = p.parse_args()
 
+
+	df = opts.df or not sys.platform in ("win32", "darwin")
+
+
 	scope = rez_scope()
+	errors = 0
 	for f in opts.files:
 		ok = execute(f, scope)
+		if not ok: errors += 1
 
+	if errors > 0 : sys.exit(1)
 
-	print("/* Generated on {} */".format(time.ctime()))
-	print('#include "types.rez"\n')
-	rObject.dump_rez()
+	if not opts.o: opts.rez = True
+
+	if df or opts.rez:
+		open_rfork = io.open
+
+	if opts.rez:
+		print("/* Generated on {} */".format(time.ctime()))
+		print('#include "types.rez"\n')
+		rObject.dump_rez()
+	else:
+		with open_rfork(opts.o, "wb") as io:
+			rObject.save_resources(io)
 
 	rObject.dump_exports()
 	sys.exit(0)

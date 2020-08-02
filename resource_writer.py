@@ -1,5 +1,6 @@
 from enum import Enum, Flag
-
+from itertools import groupby
+import struct
 
 class rTypes(Enum):
 	rIcon = 0x8001                    # Icon type 
