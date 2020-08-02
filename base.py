@@ -325,11 +325,13 @@ class rTextObject(rObject):
 
 
 
-	def __init__(self, text, **kwargs): # id=None, attr=None):
+	def __init__(self, *text, **kwargs): # id=None, attr=None):
 		super().__init__(**kwargs) # id=id, attr=attr
  		# text is a string or bytes.
 		# bytes is assumed to be macroman
-		self.text = str_to_bytes(text)
+		# self.text = str_to_bytes(text)
+
+		self.text = b"".join([str_to_bytes(x) for x in text])
 
 	def __len__(self):
 		return len(self.text)
@@ -356,6 +358,9 @@ class rTextForLETextBox2(rTextObject):
 	rName = "rTextForLETextBox2"
 	rType = 0x800b
 
+# TODO - rAlertString and rError string are
+# both formatted c-strings used by AlertWindow.
+# see TB 3 52-6.  size, optional icon, text, buttons.
 class rAlertString(rTextObject):
 	rName = "rAlertString"
 	rType = 0x8015
@@ -411,7 +416,7 @@ class rStringList(rObject):
 		self.children = [str_to_bytes(x) for x in strings]
 
 	def __bytes__(self):
-		bb = struct.pack("<H", len(self._strings))
+		bb = struct.pack("<H", len(self.children))
 		for x in self.children:
 			bb += bytes( [len(x)] ) # pstring
 			bb += x

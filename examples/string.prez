@@ -9,7 +9,14 @@
 
 rText("rText")
 rTextBlock(b"rTextBlock") # bytes 
-rTextForLETextBox2("rTextForLETextBox2")
+rTextForLETextBox2(
+
+	TBStylePlain,
+	"rTextForLETextBox2",
+	TBStyleBold, TBCenterJust,
+	b"rTextForLETextBox2",
+
+)
 rAlertString("rAlertString")
 rErrorString("rErrorString")
 
@@ -26,3 +33,5 @@ rWString("rWString")
 rC1InputString("rC1InputString")
 
 rStringList('rStringList', b"rStringList", r"rStringList")
+
+
