@@ -1,0 +1,24 @@
+rMenuBar(
+	rMenu("@",
+		rMenuItem("About My App…", export="kAboutMenuItem"),
+		rMenuItem("Preferences…", ",", export="kPreferencesMenuItem")
+	),
+	rMenu(" File ",
+		rMenuItem("New ", "Nn", export="kNewMenuItem"),
+		rMenuItem("Open…", "Oo", export="kOpenMenuItem"),
+		rMenuItem("Save", "Ss", disabled=True, export="kSaveMenuItem"),
+		DividerMenuItem(),
+		rMenuItem("Close", "Ww", id=0xff, export="kCloseMenuItem"),
+		export = "kFileMenu"
+	),
+	rMenu(" Edit ",
+		UndoMenuItem(), # shortcut for doing it manually,
+		DividerMenuItem(),
+		CutMenuItem(),
+		CopyMenuItem(),
+		PasteMenuItem(),
+		ClearMenuItem(),
+		export = "kEditMenu"
+	),
+	export = "kMenuBar"
+)
