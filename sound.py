@@ -84,9 +84,9 @@ class rSoundSample(rObject):
 	rName = "rSoundSample"
 	rType = 0x8024
 
-	def __init__(filename, pitch=None, rate=None, channel=0, id=None, attr=None):
+	def __init__(filename, pitch=None, rate=None, channel=0, **kwargs):
 
-		super().__init__(id=id, attr=attr)
+		super().__init__(**kwargs)
 
 		new_rate = rate
 		freq = pitch_to_hz(pitch)

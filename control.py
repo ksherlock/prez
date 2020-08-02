@@ -72,11 +72,10 @@ class rSimpleButton(rControlTemplate):
 	# #Define SquareButton        $0002
 	# #Define SquareShadowButton  $0003
 	def __init__(self, rect, title, *,
-		id=None, attr=None,
 		flags = 0x0000, moreFlags = 0x0000,
 		refCon = 0x00000000, controlID=None,
 		**kwargs):
-		super().__init__(id, attr)
+		super().__init__(**kwargs)
 
 		if kwargs.get("invisible"): flags |= 0x0080
 		if kwargs.get("inactive"): flags |= 0xff00
@@ -159,14 +158,14 @@ class rCheckControl(rControlTemplate):
 	procRef = 0x82000000
 
 	def __init__(self, rect, title, *,
-		id=None, attr=None,
 		flags = 0x0000, moreFlags = 0x0000,
 		refCon = 0x00000000, controlID=None,
 		checked=False,
 		invisible=False, inactive=False,
-		keys=None
+		keys=None,
+		**kwargs
 		):
-		super().__init__(id, attr)
+		super().__init__(**kwargs)
 
 		if invisible: flags |= 0x0080
 		if inactive: flags |= 0xff00
@@ -250,7 +249,6 @@ class rRadioControl(rControlTemplate):
 	procRef = 0x84000000
 
 	def __init__(self, rect, title, *,
-		id=None, attr=None,
 		flags = 0x0000, moreFlags = 0x0000,
 		refCon = 0x00000000, controlID=None,
 		checked=False,
@@ -258,7 +256,7 @@ class rRadioControl(rControlTemplate):
 		keys=None,
 		family=0
 		):
-		super().__init__(id, attr)
+		super().__init__(**kwargs)
 
 		if invisible: flags |= 0x0080
 		if inactive: flags |= 0xff00
@@ -356,15 +354,15 @@ class rThermometerControl(rControlTemplate):
 	procRef = 0x87FF0002
 
 	def __init__(self, rect, *,
-		id=None, attr=None,
 		flags = 0x0000, moreFlags = 0x0000,
 		refCon = 0x00000000, controlID=None,
 		value=0,
 		scale=0,
 		horizontal=False,
-		invisible=False, inactive=False
+		invisible=False, inactive=False,
+		**kwargs
 		):
-		super().__init__(id, attr)
+		super().__init__(**kwargs)
 
 		if invisible: flags |= 0x0080 # ?
 		if inactive: flags |= 0xff00 # ?
@@ -453,15 +451,15 @@ class rRectangleControl(rControlTemplate):
 	}
 
 	def __init__(self, rect, *,
-		id=None, attr=None,
 		flags = 0x0000, moreFlags = 0x0000,
 		refCon = 0x00000000, controlID=None,
 		penHeight=1,
 		penWidth=2,
 		invisible=False, inactive=False,
-		color = Black
+		color = Black,
+		**kwargs
 		):
-		super().__init__(id, attr)
+		super().__init__(kwargs)
 
 		if invisible: flags |= 0x0080
 		if inactive: flags |= 0xff00
@@ -546,7 +544,6 @@ class rStatTextControl(rControlTemplate):
 
 
 	def __init__(self, rect, text, *,
-		id=None, attr=None,
 		flags = 0x0000, moreFlags = 0x0000,
 		refCon = 0x00000000, controlID=None,
 		invisible=False, inactive=False,
@@ -561,8 +558,9 @@ class rStatTextControl(rControlTemplate):
 		centerJust = False,
 		rightJust = False,
 		fullJust = False,
+		**kwargs
 		):
-		super().__init__(id, attr)
+		super().__init__(**kwargs)
 
 		if invisible: flags |= 0x0080
 		if inactive: flags |= 0xff00

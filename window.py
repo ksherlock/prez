@@ -51,11 +51,9 @@ class rWindParam1(rObject):
 		infoHeight = 0,
 		plane = -1, # inFront
 		# inFront = True,
-		id = None,
-		attr = None,
 		**kwargs):
 
-		super().__init__(id=id, attr=attr)
+		super().__init__(**kwargs)
 
 		self.frameBits = frameBits
 		if title: self.title = rPString.make_string(title)

@@ -45,8 +45,8 @@ class rMenuBar(rObject):
 	rName = "rMenuBar"
 	rType = 0x8008
 
-	def __init__(self, *children, id=None, attr=None):
-		super().__init__(id, attr)
+	def __init__(self, *children, **kwargs):
+		super().__init__(**kwargs)
 		self.children = children[:]
 		for x in children:
 			if not isinstance(x, rMenu):
@@ -73,6 +73,7 @@ class rMenuBar(rObject):
 class rMenu(rObject):
 	rName = "rMenu"
 	rType = 0x8009
+	# rChildType = rMenuItem
 	rRange = range(0x0001,0xffff)
 
 	# /*-------------------------------------------------------*/
@@ -85,11 +86,11 @@ class rMenu(rObject):
 
 	#flags = all off = a080 (disabled)
 
-	def __init__(self, title, *children, id=None, attr=None,
-		flags=0x0000, menuID=None, 
+	def __init__(self, title, *children,
+		flags=0x0000, menuID=None,
 		**kwargs
 		):
-		super().__init__(id, attr)
+		super().__init__(**kwargs)
 		self.title = rPString.make_string(title)
 		self.children = children[:]
 		self.menuID = menuID
@@ -167,10 +168,10 @@ class rMenuItem(rObject):
 	# #Define ItemTitleRefShift   $4000
 
 
-	def __init__(self, title, keys="", *, id=None, attr=None, 
+	def __init__(self, title, keys="", *, 
 		checkMark=None, itemID=None, flags=0x0000,
 		**kwargs):
-		super().__init__(id, attr)
+		super().__init__(**kwargs)
 
 		self.title = rPString.make_string(title)
 

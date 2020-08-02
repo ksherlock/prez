@@ -3,6 +3,8 @@ from bisect import bisect_left
 from rect import *
 from utils import *
 
+from constants import *
+
 __all__ = ["rObject", "rText", "rTextBlock", "rTextForLETextBox2", 
 	"rAlertString", "rErrorString", "rComment", "rPString", 
 	"rCString", "rWString", "rC1InputString", "rStringList",
@@ -21,17 +23,42 @@ class rObject:
 	_resources = {}
 	_rnames = {}
 
-	# also a define=property to trigger export in equ file?
-	def __init__(self, id=None, attr=None):
+	def __init__(self, id=None, attr=0, **kwargs):
 		rType = self.rType
-		self.id = id
-		self.attr = attr
+
+
+		if kwargs.get("attrPage", False): attr |= attrPage
+		if kwargs.get("attrNoSpec", False): attr |= attrNoSpec
+		if kwargs.get("attrNoCross", False): attr |= attrNoCross
+		if kwargs.get("resPreLoad", False): attr |= resPreLoad
+		if kwargs.get("resProtected", False): attr |= resProtected
+		if kwargs.get("attrPurge1", False): attr |= attrPurge1
+		if kwargs.get("attrPurge2", False): attr |= attrPurge2
+		if kwargs.get("attrPurge3", False): attr |= attrPurge3
+		if kwargs.get("resAbsLoad", False): attr |= resAbsLoad
+		if kwargs.get("resConverter", False): attr |= resConverter
+		if kwargs.get("attrFixed", False): attr |= attrFixed
+		if kwargs.get("attrLocked", False): attr |= attrLocked
+
+		if kwargs.get("attrPurge", False): attr |= attrPurge
+
+		self._id = id
+		self._attr = attr
+
 		self._export = None
 		self._name = None
 
-		self._check_id(rType, id)
+		self._check_id()
 
-	def _check_id(self, rType, rID):
+		if "export" in kwargs: self._export = kwargs["export"]
+		if "name" in kwargs: 
+			self.name(kwargs["name"])
+
+
+	def _check_id(self):
+
+		rType = self.rType
+		rID = self._id
 
 		if rType in self._resources:
 			xx = self._resources[rType]
@@ -71,8 +98,15 @@ class rObject:
 		self._export = name
 		return self
 
+	# .attr(attrNoSpec, attrLocked, attrFixed)
+	# .attr(attrNoSpec + attrLocked + attrFixed)
+	def attr(self, *attrs):
+		for x in attrs:
+			self._attr |= x
+		return self
+
 	def get_id(self):
-		rID = self.id
+		rID = self._id
 		rType = self.rType
 		if type(rID) == int: return rID
 
@@ -128,6 +162,24 @@ class rObject:
 				if r._export:
 					print(fmt.format(r._export, r.get_id()))
 
+	def _format_attr(self):
+		attr = self._attr
+		if not attr: return ""
+		opts = [""]
+		if attr & attrPage: opts.append("attrPage")   
+		if attr & attrNoSpec: opts.append("attrNoSpec") 
+		if attr & attrNoCross: opts.append("attrNoCross")
+		if attr & resPreLoad: opts.append("resPreLoad")
+		if attr & resProtected: opts.append("resProtected")
+		if attr & attrPurge1: opts.append("attrPurge1")
+		if attr & attrPurge2: opts.append("attrPurge2")
+		if attr & attrPurge3: opts.append("attrPurge3")
+		if attr & resAbsLoad: opts.append("resAbsLoad")
+		if attr & resConverter: opts.append("resConverter")
+		if attr & attrFixed: opts.append("attrFixed")
+		if attr & attrLocked: opts.append("attrLocked")
+		return ", ".join(opts)
+
 	@staticmethod
 	def dump():
 		for rType,rList in rObject._resources.items():
@@ -143,7 +195,9 @@ class rObject:
 
 				data = [bb[x*16:x*16+16] for x in range(0, len(bb)+15>>4)]
 
-				print("{}(${:08x}) {{".format(r.rName, r.get_id()))
+				print("{}(${:08x}{}) {{".format(
+					r.rName, r.get_id(), r._format_attr()
+				))
 				for x in data:
 					print("\t$\"" + x.hex() + "\"")
 				print("}\n")
@@ -154,15 +208,17 @@ class rObject:
 			for r in rList:
 				content = r._rez_string()
 
-				print("{}(${:08x}) {{".format(r.rName, r.get_id()))
+				print("{}(${:08x}{}) {{".format(
+					r.rName, r.get_id(), r._format_attr()
+				))
 				print(content)
 				print("}\n")
 
 # container for a 0-terminated list of resource ids.
 # NOT EXPORTED BY DEFAULT
 class rList(rObject):
-	def __init__(self, *children, id=None, attr=None):
-		super().__init__(id=id, attr=attr)
+	def __init__(self, *children, **kwargs):
+		super().__init__(**kwargs)
 		self.children = children
 		tt = self.rChildType
 		for x in self.children:
@@ -195,7 +251,7 @@ class rResName(rObject):
 	rName = "rResName"
 	rType = 0x8014
 
-	def __init__(self, id=None, attr=None):
+	def __init__(self, id, attr=None):
 		super().__init__(id=id, attr=attr)
 		self.children = []
 
@@ -230,7 +286,8 @@ class rResName(rObject):
 		rv += "\n\t}"
 		return rv
 
-
+# NOT EXPORTED BY DEFAULT
+# abstract parent for text objects.
 class rTextObject(rObject):
 
 	@classmethod
@@ -243,11 +300,9 @@ class rTextObject(rObject):
 
 
 
-
-
-	def __init__(self, text, *, id=None, attr=None):
-		super().__init__(id=id, attr=attr)
-		# text is a string or bytes.
+	def __init__(self, text, **kwargs): # id=None, attr=None):
+		super().__init__(**kwargs) # id=id, attr=attr
+ 		# text is a string or bytes.
 		# bytes is assumed to be macroman
 		self.text = str_to_bytes(text)
 
@@ -326,8 +381,8 @@ class rStringList(rObject):
 	rName = "rStringList"
 	rType = 0x8007
 
-	def __init__(self, strings, *, id=None, attr=None):
-		super().__init__(id, attr)
+	def __init__(self, strings, **kwargs):
+		super().__init__(**kwargs)
 		self.children = [str_to_bytes(x) for x in strings]
 
 	def __bytes__(self):
@@ -350,8 +405,8 @@ class rTwoRects(rObject):
 	rName = "rTwoRects"
 	rType = 0x801a
 
-	def __init__(self, r1, r2, *, id=None, attr=None):
-		super().__init__(id=id, attr=attr)
+	def __init__(self, r1, r2, **kwargs):
+		super().__init__(**kwargs)
 		self.r1 = r1
 		self.r2 = r2
 
@@ -364,12 +419,12 @@ class rTwoRects(rObject):
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}\n"
 		).format(*self.r1, *self.r2)
 
-class rRectList(rObject):
+class rRectList(rObject):	
 	rName = "rRectList"
 	rType = 0xc001
 
-	def __init__(self, *rects, id=None, attr=None):
-		super().__init__(id=id, attr=attr)
+	def __init__(self, *rects, **kwargs):
+		super().__init__(**kwargs)
 		self.rects = rects
 
 	def __bytes__(self):
