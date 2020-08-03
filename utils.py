@@ -42,6 +42,10 @@ def format_string(bstring, quote=True):
 	if quote: return '"' + s + '"'
 	return s
 
+def format_char(x):
+	c = _map.get(x, chr(x))
+	return "'" + c + "'"
+
 def multi_format_string(bstring, indent=""):
 	q = '"'
 
