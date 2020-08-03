@@ -26,11 +26,12 @@ def rez_scope():
 	import sound
 	import rect
 	import version
+	import tool_startup
 	import constants
 
 	# could do: mod = importlib.import_module("base"), etc.
 	scope = {}
-	for mod in (base, window, control, menu, sound, rect, version, constants):
+	for mod in (base, window, control, menu, sound, rect, version, tool_startup, constants):
 		if hasattr(mod, '__all__'): keys = mod.__all__
 		else: keys = [x for x in dir(mod) if x[0] != '_']
 

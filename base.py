@@ -11,7 +11,7 @@ from constants import *
 __all__ = ["rObject", "rText", "rTextBlock", "rTextForLETextBox2", 
 	"rAlertString", "rErrorString", "rComment", "rPString", 
 	"rCString", "rWString", "rC1InputString", "rStringList",
-	"rTwoRects", "rRectList", "rToolStartup"]
+	"rTwoRects", "rRectList"]
 
 #define KeyEquiv  array[1]{ char; char; _mybase_ word; _mybase_ word; }
 
@@ -473,63 +473,3 @@ class rRectList(rObject):
 		if self.rects: rv += "\n"
 		rv += "\t}"
 		return rv;
-
-
-class rToolStartup(rObject):
-	"""
-		mode: 320 or 640
-		tools: tool number or (tool number, version)
-	"""
-	rName = "rToolStartup"
-	rType = 0x8013
-
-	def __init__(self, *tools, mode=640, **kwargs):
-		super().__init__(**kwargs)
-
-		self.mode = 640
-		self.tools = tools
-
-		if mode not in (320,640): raise ValueError("Bad mode: {}".format(mode))
-		for x in tools:
-			if type(x) == int: continue
-			if type(x) == tuple and len(x) == 2:
-				a,b = x
-				if type(a) == int and type(b) == int: continue
-			raise ValueError("Bad tool: {}".format(x))
-
-
-
-	def __bytes__(self):
-		bb = struct.pack("<HHHIH",
-			0, # flags,
-			0x80 if self.mode == 640 else 0x00,
-			0, 0,
-			len(self.tools)
-		)
-
-		for x in self.tools:
-			if type(x) == tuple: a,b = x
-			else: a = x; b = 0
-
-			bb += struct.pack("<HH", a, b)
-
-		return bb
-
-	def _rez_string(self):
-		rv = (
-			"\t{}, /* mode */\n"
-			"\t{{\n".format(
-				"mode640" if self.mode == 640 else "mode320" 
-			))
-
-		tmp = []
-		for x in self.tools:
-			if type(x) == tuple: a,b = x
-			else: a = x; b = 0
-			tmp.append("\t\t{}, 0x{:04x}".format(a, b))
-
-		rv += ",\n".join(tmp)
-
-		if self.tools: rv += "\n"
-		rv += "\t}"
-		return rv

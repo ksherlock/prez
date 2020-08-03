@@ -1,0 +1,18 @@
+#
+#
+#
+rToolStartup(0xc080, 1, 2, 3, 4, 5)
+
+rToolStartup(mode320, (1, 0), (37, 0x0203))
+
+rToolStartup(mode640 | fUseShadowing | fFastPortAware,
+
+	(3, 0x300),
+	(4, 0x301),
+	(5, 0x302),
+	(6, 0x300),
+	(8, 0x301),
+	(11, 0x200),
+	(30, 0x100)
+
+)
