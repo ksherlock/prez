@@ -14,7 +14,7 @@ def export_enum(cls):
 	return cls	
 
 @export_enum
-class Keys(enum.Flag):
+class Modifier(enum.Flag):
 	appleKey = 0x0100 		# set if Apple key down
 	shiftKey = 0x0200 		# set if shift key down
 	capsLock = 0x0400 		# set if caps lock key down
@@ -41,13 +41,13 @@ class KeyEquivalent:
 
 	def __init__(self, keys, keyModifiers=None, keyCareBits=None):
 		if keyModifiers == None: keyModifiers = 0
-		elif type(keyModifiers) == Keys: keyModifiers = keyModifiers.value
+		elif type(keyModifiers) == Modifier: keyModifiers = keyModifiers.value
 		elif type(keyModifiers) == int: pass
 		else:
 			raise TypeError("KeyEquivalent: bad modifier type: {}".format(type(keyModifiers)))
 
 		if keyCareBits == None: keyCareBits = keyModifiers
-		elif type(keyCareBits) == Keys: keyCareBits = keyCareBits.value
+		elif type(keyCareBits) == Modifier: keyCareBits = keyCareBits.value
 		elif type(keyCareBits) == int: pass
 		else:
 			raise TypeError("KeyEquivalent: bad modifier type: {}".format(type(keyCareBits)))
