@@ -85,7 +85,7 @@ if sys.platform == "win32":
 		return True
 
 
-if sys.platform == "darwin":
+elif sys.platform == "darwin":
 	def open_rfork(file, mode="r"):
 		file = os.path.realpath(file)
 		rfile = file + "/..namedfork/rsrc"
@@ -106,7 +106,7 @@ if sys.platform == "darwin":
 		if ok < 0: return False
 		return True
 
-if sys.platform == "linux":	
+elif sys.platform == "linux":	
 	def open_rfork(file, mode="r"):
 		raise NotImplementedError("open_rfork")
 
@@ -115,3 +115,10 @@ if sys.platform == "linux":
 		data = struct.pack(">8s24x", _make_finder_data(filetype, auxtype))
 		os.setxattr(path, "com.apple.FinderInfo", data, 0, 0)
 		return True
+
+else:
+	def open_rfork(file, mode="r"):
+		raise NotImplementedError("open_rfork")
+
+	def set_file_type(path, filetype, auxtype):
+		raise NotImplementedError("set_file_type")
