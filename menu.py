@@ -33,13 +33,13 @@ _menu_item_ids = {}
 
 
 
-def _to_char_string(x):
-	if not x: return '""'
-	if x == 0x0d: return "\\n" # intentionally backwards
-	if x == 0x0a: return "\\r" #
-	if chr(x) in "\\\\'" : return "\\" + x
-	if x >= 32 and x < 0x7e: return '"' + chr(x) + '"'
-	return "\\${:02x}".format(x)
+# def _to_char_string(x):
+# 	if not x: return '""'
+# 	if x == 0x0d: return "\\n" # intentionally backwards
+# 	if x == 0x0a: return "\\r" #
+# 	if chr(x) in "\\\\'" : return "\\" + x
+# 	if x >= 32 and x < 0x7e: return '"' + chr(x) + '"'
+# 	return "\\${:02x}".format(x)
 
 class rMenuBar(rObject):
 	rName = "rMenuBar"
@@ -237,8 +237,8 @@ class rMenuItem(rObject):
 			"\t0x{:04x} /* title ref (rPString) */"
 		).format(
 			itemID,
-			_to_char_string(self.itemChar),
-			_to_char_string(self.altItemChar),
+			format_char(self.itemChar),
+			format_char(self.altItemChar),
 			self.checkMark,
 			self.flags,
 			self.title.get_id()

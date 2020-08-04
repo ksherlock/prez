@@ -42,9 +42,11 @@ def format_string(bstring, quote=True):
 	if quote: return '"' + s + '"'
 	return s
 
+# rez "char" is a string of length 1.
+# 'x' is character literal which is a number.
 def format_char(x):
 	c = _map.get(x, chr(x))
-	return "'" + c + "'"
+	return '"' + c + '"'
 
 def multi_format_string(bstring, indent=""):
 	q = '"'
