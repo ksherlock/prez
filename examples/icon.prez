@@ -1,0 +1,18 @@
+
+rIcon(
+	color=True,
+	height = 4,
+	width = 4,
+	image = bytes.fromhex(
+		"ffff"
+		"f00f"
+		"f00f"
+		"ffff"
+	),
+	mask = ( # will call bytes.fromhex
+		"0000"
+		"0ff0"
+		"0ff0"
+		"0000"
+	)
+)
