@@ -132,9 +132,9 @@ class rObject:
 
 		for rID in rr:
 			if ix >= len(used) or used[ix] > rID :
-				self.id = rID
-				xx.add(self.id)
-				return self.id
+				self._id = rID
+				xx.add(self._id)
+				return self._id
 			ix += 1
 		raise Exception("Unable to allocate id for resource")
 
