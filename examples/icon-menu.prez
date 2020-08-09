@@ -1,0 +1,26 @@
+#
+# a menu item using an rItemStruct to include text and an icon.
+#
+#
+
+
+rMenuItem(
+	rItemStruct(
+		"text",
+		rIcon(color = True, height = 4, width = 4,
+			image = (
+				"0ff0"
+				"f00f"
+				"f00f"
+				"0ff0"
+			),
+			mask = (
+				"0ff0"
+				"f00f"
+				"f00f"
+				"0ff0"
+			),
+
+		)
+	)
+)

@@ -1,12 +1,14 @@
 
 from base import *
 from utils import *
+from icon import rIcon
 import struct
 
 __all__ = [
 	'rMenuBar',
 	'rMenu',
 	'rMenuItem',
+	'rItemStruct',
 
 	'UndoMenuItem',
 	'CutMenuItem',
@@ -22,8 +24,6 @@ __all__ = [
 # TB Vol 3 Chapter 37
 # TB Vol 1 Chapter 13
 
-# TODO - menu item icon support (system 6) rItemStruct
-
 # A menu ID must be unique for each menu; that is, no two menus
 # can have the same ID or the system will fall. Similarly, no two
 # items can have the same Item ID.
@@ -32,14 +32,40 @@ _menu_ids = {}
 _menu_item_ids = {}
 
 
+# ref is resource flag for the text is stored in the menu item flags
+# icon could be null but in that case, why are you using an rItemStruct????
+class rItemStruct(rObject):
+	rName = "rItemStruct"
+	rType = 0x8028
 
-# def _to_char_string(x):
-# 	if not x: return '""'
-# 	if x == 0x0d: return "\\n" # intentionally backwards
-# 	if x == 0x0a: return "\\r" #
-# 	if chr(x) in "\\\\'" : return "\\" + x
-# 	if x >= 32 and x < 0x7e: return '"' + chr(x) + '"'
-# 	return "\\${:02x}".format(x)
+	def __init__(self, text, icon, **kwargs):
+		super().__init__(**kwargs)
+
+		self.text = rPString.make_string(text)
+		if type(icon) != rIcon:
+			raise TypeError("rItemStruct: bad icon type: {}".format(type(icon)))
+
+		self.icon = icon
+
+	def __bytes__(self):
+		return struct.pack("<HII",
+			0x8000 + 0b10, # icon present, icon is resource
+			self.text.get_id(),
+			self.icon.get_id()
+		)
+
+	def _rez_string(self):
+		return (
+			"\t0x{:04x}, /* flags */\n"
+			"\t0x{:08x}, /* text (rPString) */\n"
+			"\t0x{:08x} /* icon (rIcon) */\n"
+		).format(
+			0x8000 + 0b10,
+			self.text.get_id(),
+			self.icon.get_id()
+		)
+
+
 
 class rMenuBar(rObject):
 	rName = "rMenuBar"
@@ -173,7 +199,11 @@ class rMenuItem(rObject):
 		**kwargs):
 		super().__init__(**kwargs)
 
-		self.title = rPString.make_string(title)
+		if isinstance(title, rItemStruct):
+			self.title = title
+			flags |= 0b0000_0110_0000_0000 # title is rItem struct, is resource 
+		else:
+			self.title = rPString.make_string(title)
 
 		flags |= 0x8000 # title ref is resource
 		if kwargs.get("bold"): flags |= 0x0001
@@ -234,14 +264,15 @@ class rMenuItem(rObject):
 			"\t{}, {}, /* chars */\n"
 			"\t0x{:04x}, /* check */\n"
 			"\t0x{:04x}, /* flags */\n"
-			"\t0x{:04x} /* title ref (rPString) */"
+			"\t0x{:04x} /* title ref ({}) */"
 		).format(
 			itemID,
 			format_char(self.itemChar),
 			format_char(self.altItemChar),
 			self.checkMark,
 			self.flags,
-			self.title.get_id()
+			self.title.get_id(),
+			self.title.rName
 		)
 
 
