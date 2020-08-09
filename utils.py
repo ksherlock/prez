@@ -45,6 +45,7 @@ def format_string(bstring, quote=True):
 # rez "char" is a string of length 1.
 # 'x' is character literal which is a number.
 def format_char(x):
+	if x == 0: return '""'
 	c = _map.get(x, chr(x))
 	return '"' + c + '"'
 
