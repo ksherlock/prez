@@ -215,7 +215,7 @@ class rObject:
 					r.rName, r.get_id(), r._format_attr()
 				), file=io)
 				print(content, file=io)
-				print("}\n", file=io)
+				print("};\n", file=io)
 
 
 	@staticmethod

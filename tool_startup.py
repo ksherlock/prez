@@ -47,7 +47,7 @@ class rToolStartup(rObject):
 			if type(x) == tuple and len(x) == 2:
 				a,b = x
 				if type(a) == int and type(b) == int: continue
-			raise Type("rToolStartup: bad tool: {}".format(x))
+			raise TypeError("rToolStartup: bad tool: {}".format(x))
 
 		self.tools = [x if type(x) == tuple else (x, 0) for x in tools]
 

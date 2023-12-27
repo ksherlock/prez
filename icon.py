@@ -78,9 +78,9 @@ class rIcon(rObject):
 			"\t{:d}, /* height */\n"
 			"\t{:d}, /* width */\n"
 		).format(self.type, self.height, self.width)
-		s += "\n\t/*image */\n"
+		s += "\n\t/* image */\n"
 		s += rez_hex(self.image, width = self.width // 2, indent = 1, comma = True)
-		s += "\n\t/*mask */\n"
+		s += "\n\t/* mask */\n"
 		s += rez_hex(self.mask, width = self.width // 2, indent = 1, comma = False)
 		return s
 

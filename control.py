@@ -57,6 +57,51 @@ class rControlTemplate(rObject):
 # word background when selected
 # word title when selected 
 # word title when not selected
+class rSimpleButtonColors(rObject):
+	rName = "rCtlColorTbl"
+	rType = 0x800D
+
+	def __init__(self, *,
+		outline=Black,
+		background=White,
+		backgroundSelected=Black,
+		# textBackground should usually match the background color.
+		text=Black,
+		textBackground=None,
+		textSelected=White,
+		textSelectedBackground=None,
+		**kwargs):
+		super().__init__(**kwargs)
+
+		data = [0, 0, 0, 0, 0]
+
+		if textBackground == None: textBackground = background
+		if textSelectedBackground == None: textSelectedBackground = backgroundSelected
+
+		data[0] = outline.value << 4
+		data[1] = background.value << 4
+		data[2] = backgroundSelected.value << 4
+		data[3] = text.value | (textBackground.value << 4)
+		data[4] = textSelected.value | (textSeletectBackground.value << 4)
+
+		self.data = data
+
+
+
+	def __bytes__(self):
+		return struct.pack("<5H", *self.data)
+	def _rez_string(self):
+		return(
+			"\t0x{:04x}, /* outline color */\n"
+			"\t0x{:04x}, /* interior color */\n"
+			"\t0x{:04x}, /* interior selected color */\n"
+			"\t0x{:04x}, /* text color */\n"
+			"\t0x{:04x} /* text selected color */\n"
+		).format(*self.data)
+
+
+
+
 
 class rSimpleButton(rControlTemplate):
 	rName = "rControlTemplate"
@@ -151,7 +196,50 @@ class rSimpleButton(rControlTemplate):
 # word reserved
 # word box not selected
 # word box checked
-# word title 
+# word title
+
+class rCheckControlColors(rObject):
+	rName = "rCtlColorTbl"
+	rType = 0x800D
+
+	def __init__(self, *,
+		background=White,
+		foreground=Black,
+		backgroundSelected=Black,
+		foregroundSelected=White,
+		text=Black,
+		textBackground=White,
+		**kwargs):
+		super().__init__(**kwargs)
+
+		data = [0, 0, 0, 0,]
+
+		if textBackground == None: textBackground = background
+		if textSelectedBackground == None: textSelectedBackground = backgroundSelected
+
+
+		data[1] = foreground.value | (background.value << 4)
+		data[2] = foregroundSelected.value | (backgroundSelected.value << 4)
+		data[3] = text.value | (textBackground.value << 4)
+
+		self.data = data
+
+
+
+	def __bytes__(self):
+		return struct.pack("<4H", *self.data)
+	def _rez_string(self):
+		return(
+			"\t0x{:04x}, /* reserved */\n"
+			"\t0x{:04x}, /* check box */\n"
+			"\t0x{:04x}, /* check box (selected) */\n"
+			"\t0x{:04x}, /* text */\n"
+		).format(*self.data)
+
+
+# same format
+rRadioControlColors = rCheckControlColors
+
 class rCheckControl(rControlTemplate):
 	rName = "rControlTemplate"
 	rType = 0x8004
@@ -236,6 +324,9 @@ class rCheckControl(rControlTemplate):
 			0
 		)
 		return rv
+
+
+
 
 # TODO - colors
 # color table (TB V1 Ch 4-88):

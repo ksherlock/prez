@@ -3,6 +3,7 @@ from base import *
 from utils import *
 from icon import rIcon
 import struct
+import enum
 
 __all__ = [
 	'rMenuBar',
@@ -18,6 +19,37 @@ __all__ = [
 	'CloseMenuItem',
 	'DividerMenuItem'
 ]
+
+
+def export_enum(cls):
+	global __all__
+
+	members = cls.__members__
+	globals().update(members)
+	if __all__ != None: __all__.extend(list(members))
+	return cls	
+
+@export_enum
+class MenuFlags(enum.Flag):
+	# menu item flags (duplicate menu flags.)
+	mPlain            = 0x0000
+	mBold             = 0x0001
+	mItalic           = 0x0002
+	mUnderline        = 0x0004
+	mXOR              = 0x0020
+	mDivider          = 0x0040
+	mDisabled         = 0x0080
+	# menuIItemStruct       = 0x0400
+	mOutline          = 0x0800
+	mShadow           = 0x1000
+
+	# menu flags
+	mAllowCache        = 0x0008
+	mCustom            = 0x0010
+	# rmNo_Xor            = 0x0020
+	# rmDisabled          = 0x0080
+
+
 
 # see:
 # Programmer's Reference for System 6 (Ch 13 Menu Manager Update, pg 103+)
@@ -73,10 +105,13 @@ class rMenuBar(rObject):
 
 	def __init__(self, *children, **kwargs):
 		super().__init__(**kwargs)
-		self.children = children[:]
+
 		for x in children:
 			if not isinstance(x, rMenu):
-				raise TypeError("bad type: {}".format(type(x)))
+				raise TypeError("rMenuBar: bad type: {}".format(type(x)))
+
+		self.children = children
+
 
 	def __bytes__(self):
 		bb = struct.pack("<HH", 0, 0x8000) # version, resIDs
@@ -113,27 +148,30 @@ class rMenu(rObject):
 	#flags = all off = a080 (disabled)
 
 	def __init__(self, title, *children,
-		flags=0x0000, menuID=None,
+		menuID=None,
 		**kwargs
 		):
 		super().__init__(**kwargs)
+
+		flags = 0xa000 # title ref is resource, menus are resources
 		self.title = rPString.make_string(title)
-		self.children = children[:]
 		self.menuID = menuID
+		self.children = []
 
-
-		flags |= 0xa000 # title ref is resource, menus are resources
-		if kwargs.get("allowCache"): flags |= 0x0008
-		if kwargs.get("custom"): flags |= 0x0010
-		if kwargs.get("xor"): flags |= 0x0020
-		if kwargs.get("disabled"): flags |= 0x0080
-		if kwargs.get("mChoose"): flags |= 0x0100
+		VALID = mAllowCache | mCustom | mXOR | mDisabled
+		for x in children:
+			if type(x) == MenuFlags:
+				if x not in VALID:
+					raise ValueError("rMenu: bad flag: {}".format(x))
+				flags |= x.value
+				continue
+			if isinstance(x, rMenuItem):
+				self.children.append(x)
+				continue
+			raise TypeError("rMenu: bad type: {}".format(type(x)))
 
 		self.flags = flags
 
-		for x in children:
-			if not isinstance(x, rMenuItem):
-				raise TypeError("bad type: {}".format(type(x)))
 
 	def __bytes__(self):
 		menuID = self.menuID

@@ -3,6 +3,16 @@
 
 # __all__ = ("str_to_bytes", "make_string", "format_rect", "format_point", "format_size")
 
+# decorators
+def export_enum(cls):
+	global __all__
+
+	members = cls.__members__
+	globals().update(members)
+	if __all__ != None: __all__.extend(list(members))
+	return cls	
+
+
 # helper functions
 def str_to_bytes(text):
 	if isinstance(text, str): return text.encode("macroman")
@@ -24,8 +34,8 @@ def format_size(x):
 
 def _generate_map():
 	map = { x: "\\${:02x}".format(x) for x in range(0, 256) if x < 32 or x > 126 }
-	map[0x0d] = "\\n" # intentionally backwards.
-	map[0x0a] = "\\r" # intentionally backwards.
+	map[0x0d] = "\\r" # intentionally backwards. -- no more
+	map[0x0a] = "\\n" # intentionally backwards. -- no more
 	map[0x09] = "\\t"
 	# \b \f \v \? also supported. 
 	map[ord('"')] = '\\"'

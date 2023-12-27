@@ -3,7 +3,7 @@ import enum
 from utils import *
 import struct
 
-__all__ = ["KeyEquiv"]
+__all__ = ["KeyEquivalent"]
 
 def export_enum(cls):
 	global __all__

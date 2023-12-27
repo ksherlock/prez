@@ -35,24 +35,6 @@ fAlert              = 0x2000
 fClose              = 0x4000
 fTitle              = 0x8000
 
-# menu item flags (duplicate menu flags.)
-rMIPlain            = 0x0000
-rMIBold             = 0x0001
-rMIItalic           = 0x0002
-rMIUnderline        = 0x0004
-rMIXOr              = 0x0020
-rMIDivider          = 0x0040
-rMIDisabled         = 0x0080
-rMIItemStruct       = 0x0400
-rMIOutline          = 0x0800
-rMIShadow           = 0x1000
-
-# menu flags
-rmAllowCache        = 0x0008
-rmCustom            = 0x0010
-rmNo_Xor            = 0x0020
-rmDisabled          = 0x0080
-
 
 # common flags
 ctlInvis            = 0x0080
@@ -139,3 +121,4 @@ TBVenice            = b"\x05\x00"
 TBTimes             = b"\x14\x00"
 TBHelvetica         = b"\x15\x00"
 TBCourier           = b"\x16\x00"
+

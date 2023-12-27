@@ -4,9 +4,11 @@ from base import *
 from window import *
 from control import *
 from menu import *
+from version import *
 from rect import rect, point, size
 
 from sound import *
+from alert import *
 
 rPString("hello")
 rCString("goodbye")
@@ -56,6 +58,11 @@ rTextBlock(
 
 UndoMenuItem()
 UndoMenuItem()
+
+
+rVersion("1.2.3b4", verFrance, "name", "description")
+
+rAlertString(2, "this is an alert string", awButton(awOK, default=True), awButton(awCancel))
 
 rObject.dump_hex()
 rObject.dump_rez()
