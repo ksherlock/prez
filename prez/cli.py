@@ -3,10 +3,12 @@ import sys
 import io
 import argparse
 import time
-from open_rfork import open_rfork
 import traceback
+import importlib
 
-from base import rObject
+from . open_rfork import open_rfork
+from . base import rObject
+
 
 # from base import *
 # from window import *
@@ -19,20 +21,21 @@ from base import rObject
 def rez_scope():
 	# import all the resource types and constants into
 	# a dictionary to be the exec() local scope
-	import base
-	import window
-	import control
-	import menu
-	import sound
-	import rect
-	import version
-	import tool_startup
-	import icon
-	import constants
+	# import prez.base
+	# import prez.window
+	# import prez.control
+	# import prez.menu
+	# import prez.sound
+	# import prez.rect
+	# import prez.version
+	# import prez.tool_startup
+	# import prez.icon
+	# import prez.constants
 
 	# could do: mod = importlib.import_module("base"), etc.
 	scope = {}
-	for mod in (base, window, control, menu, sound, rect, version, tool_startup, icon, constants):
+	for m in ('base', 'window', 'control', 'menu', 'sound', 'rect', 'version', 'tool_startup', 'icon', 'constants'):
+		mod = importlib.import_module('.' + m, 'prez')
 		if hasattr(mod, '__all__'): keys = mod.__all__
 		else: keys = [x for x in dir(mod) if x[0] != '_']
 
@@ -56,20 +59,20 @@ def execute(filename, scope):
 		print(traceback.format_exc())
 		return False
 
-if __name__ == '__main__':
+def main():
+
 	p = argparse.ArgumentParser(prog='prez')
 	p.add_argument('files', metavar='file', type=str, nargs='+')
 	p.add_argument('--rez', action='store_true', help="Generate REZ code")
-	p.add_argument('-x', action="store_true", help="Generate REZ data")
+	p.add_argument('--hex', action="store_true", help="Generate REZ data")
 
 	p.add_argument('-D', type=str, nargs='+', help='define a variable')
-	p.add_argument('--df', action="store_true", help="Write to a regular file")
+	p.add_argument('--data-fork', action="store_true", help="Write to a regular file")
 	p.add_argument('-o', metavar='file', type=str, help="Specify output file")
 
 	opts = p.parse_args()
 
-
-	df = opts.df or not sys.platform in ("win32", "darwin")
+	opts.data_fork = opts.data_fork or not sys.platform in ("win32", "darwin")
 
 
 	scope = rez_scope()
@@ -81,19 +84,20 @@ if __name__ == '__main__':
 	if errors > 0 : sys.exit(1)
 
 	if not opts.o: opts.rez = True
-	if opts.x: opts.rez = True
 
-	if df or opts.rez:
-		open_rfork = io.open
-
-	if opts.rez:
+	if opts.rez or opts.hex:
 		print("/* Generated on {} */".format(time.ctime()))
 		print('#include "types.rez"\n')
-		if opts.x: rObject.dump_hex()
+		if opts.hex: rObject.dump_hex()
 		else: rObject.dump_rez()
 	else:
-		with open_rfork(opts.o, "wb") as io:
-			rObject.save_resources(io)
+		opener = open_rfork
+		if opts.data_fork: opener = io.open
+		with opener(opts.o, "wb") as f:
+			rObject.save_resources(f)
 
 	rObject.dump_exports()
 	sys.exit(0)
+
+if __name__ == '__main__':
+	main()

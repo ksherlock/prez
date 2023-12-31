@@ -1,9 +1,9 @@
-
-from base import rObject
-from utils import *
 import enum
 import struct
 import re
+
+from . base import rObject
+from . utils import *
 
 __all__ = ["rVersion"]
 

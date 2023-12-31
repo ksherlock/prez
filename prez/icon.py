@@ -1,5 +1,6 @@
-from base import rObject
 import struct
+
+from . base import rObject
 
 
 __all__ = ["rIcon"]

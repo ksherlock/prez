@@ -1,9 +1,10 @@
-
-from base import *
-from utils import *
-from icon import rIcon
 import struct
 import enum
+
+from . base import *
+from . utils import *
+from . icon import rIcon
+
 
 __all__ = [
 	'rMenuBar',

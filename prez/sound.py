@@ -1,11 +1,11 @@
-
-from base import rObject
 import audioop
 import struct
 import re
 import sys
 import os
 from math import log2
+
+from . base import rObject
 
 __all__ = ["rSoundSample"]
 

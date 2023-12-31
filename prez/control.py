@@ -1,8 +1,9 @@
-from base import rObject, rList, rPString, rTextForLETextBox2
 import struct
-from rect import *
-from colors import *
-from utils import *
+
+from . base import rObject, rList, rPString, rTextForLETextBox2
+from . rect import *
+from . colors import *
+from . utils import *
 
 
 __all__ = [

@@ -1,8 +1,9 @@
-
-from base import rObject
-from utils import *
 import enum
 import struct
+
+from . base import rObject
+from . utils import *
+
 
 __all__ = ["rToolStartup"]
 

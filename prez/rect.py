@@ -104,7 +104,7 @@ class size_class:
 		self.width = 0
 
 		if len(args) == 2:
-			self.height, self.width = args
+			self._assign(*args)
 			return
 
 		if len(args) == 1:
@@ -115,7 +115,7 @@ class size_class:
 				return
 
 			if is_listy(other) and len(other) == 2:
-				self.height, self.width = other
+				self._assign(*other)
 				return
 
 		if not args:
@@ -126,8 +126,21 @@ class size_class:
 
 		raise ValueError("bad size parameter")
 
+	def _assign(self, height, width):
+		self.height = height
+		self.width = width
+
 	def __eq__(self, other):
 		return type(other) == size_class and self.height == other.height and self.width == other.width
+
+	def __str__(self):
+		return "{{ {:d}, {:d} }}".format(self.height, self.width)
+
+	def __bytes__(self):
+		return struct.pack("2H", self.height, self.width)
+
+	def __iter__(self):
+		return (self.height, self.width).__iter__()
 
 
 def old_size(*args, height=None, width=None):

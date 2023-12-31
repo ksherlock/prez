@@ -1,7 +1,8 @@
 # key equivalants
 import enum
-from utils import *
 import struct
+
+from . utils import *
 
 __all__ = ["KeyEquivalent"]
 

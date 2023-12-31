@@ -1,12 +1,11 @@
 import struct
-from bisect import bisect_left
-from rect import *
-from utils import *
 import sys
+from bisect import bisect_left
 
-from resource_writer import ResourceWriter
-
-from constants import *
+from . rect import *
+from . utils import *
+from . resource_writer import ResourceWriter
+from . constants import *
 
 __all__ = ["rObject", "rText", "rTextBlock", "rTextForLETextBox2", 
 	"rAlertString", "rErrorString", "rComment", "rPString", 

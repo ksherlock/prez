@@ -1,12 +1,11 @@
-from base import *
-from control import rControlTemplate, rControlList
-from utils import *
-
 import struct
 
+from . base import *
+from . control import rControlTemplate, rControlList
+from . utils import *
+
+
 __all__ = ['rWindParam1']
-
-
 
 fHilited            = 0x0001
 fZoomed             = 0x0002
@@ -37,7 +36,6 @@ class rWindParam1(rObject):
 	rType = 0x800e
 
 	def __init__(self, position, title=None, *controls, 
-
 		frameBits = 0,
 		refCon = 0,
 		zoomRect = (0, 0, 0, 0),

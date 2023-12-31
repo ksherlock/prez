@@ -1,0 +1,86 @@
+
+rComment("""
+FROTZ V2.55
+An interpreter for all Infocom and other Z-Machine games.
+Complies with the Z-Machine Standard version 1.1.
+
+Originally written by Stefan Jokisch in 1995-1997.
+Ported to Unix by Galen Hazelwood.
+Reference code Unix and DOS ports are maintained by David Griffith.
+IIgs .console port by Kelvin Sherlock.
+
+Frotz is free software; you can redistribute it and/or modify it \
+under the terms of the GNU General Public License as published by \
+the Free Software Foundation; either version 2 of the License, or \
+(at your option) any later version.
+""")
+
+
+rVersion( '0.0.0a2', verUS, "Frotz 2.55", "Kelvin Sherlock\nDavid Griffith, et alia")
+
+rToolStartup(
+	mode640 | fFastPortAware | fUseShadowing,
+	3, (4, 0x0308), 5, 6, 11, 14, 15, 16, 18, 20, 21, 22, 23, 27, 28, 30,
+	export="kStartStop"
+)
+
+rMenuBar(
+  rMenu("@",
+    rMenuItem("About Frotz…", export="kAboutMenuItem"),
+    rMenuItem("Preferences…", ",", export="kPreferencesMenuItem"),
+    DividerMenuItem(),
+    export="kAppleMenu"
+  ),
+  rMenu(" File ",
+    # rMenuItem("New ", "Nn", export="kNewMenuItem"),
+    rMenuItem("Open…", "Oo", export="kOpenMenuItem"),
+    rMenuItem("Restart", "Rr", export="kRestartMenuItem"),
+    # rMenuItem("Save", "Ss", disabled=True, export="kSaveMenuItem"),
+    # DividerMenuItem(),
+    # rMenuItem("Close", "Ww", id=0xff, export="kCloseMenuItem"),
+    DividerMenuItem(),
+    rMenuItem("Quit", "Qq", export="kQuitMenuItem"),
+    export = "kFileMenu"
+  ),
+  rMenu(" Edit ",
+    UndoMenuItem(), # shortcut for doing it manually,
+    DividerMenuItem(),
+    CutMenuItem(),
+    CopyMenuItem(),
+    PasteMenuItem(),
+    ClearMenuItem(),
+    export = "kEditMenu"
+  ),
+  export = "kMenuBar"
+)
+
+AboutRect = rect(x = 0, y = 0, height = 100, width = 400)
+
+rWindParam1(
+
+	AboutRect.center(), None,
+
+	rStatTextControl(
+
+		AboutRect,
+
+		rTextForLETextBox2(
+			TBCenterJust,
+			TBFont, TBVenice, b"\x00", b"\x18", # Venice 24-point
+			"Frotz",
+			TBFont, TBMonaco, b"\x00", b"\x09", # monaco, 9-point
+			"\nv 2.55\n",
+			"Stefan Jokisch, Galen Hazel, David Griffith, et alia\n",
+			"IIgs version by Kelvin Sherlock (alpha 2)"
+		)	
+
+	),
+
+	frameBits = fVis,
+	export = "kAboutWindow"
+)
+
+
+
+
+
