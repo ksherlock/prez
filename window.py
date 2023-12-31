@@ -56,6 +56,7 @@ class rWindParam1(rObject):
 		super().__init__(**kwargs)
 
 		self.frameBits = frameBits
+		self.title = None
 		if title: self.title = rPString.make_string(title)
 		self.zoomRect=zoomRect
 		self.color = None
