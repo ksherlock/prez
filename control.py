@@ -172,14 +172,14 @@ class rSimpleButton(rControlTemplate):
 		rv = (
 			"\t0x{:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
-			"\tSimpleButtonControl {{\n"
+			"\tSimpleButtonControl {{{{\n"
 			"\t\t0x{:04x}, /* flags */\n"
 			"\t\t0x{:04x}, /* more flags */\n"
 			"\t\t0x{:08x}, /* refcon */\n"
 			"\t\t0x{:08x}, /* title ref */\n"
 			"\t\t0x{:08x} /* color table ref */\n"
 			# "\t\t0x{}, /* key equiv */\n"
-			"\t}}"
+			"\t}}}}"
 		).format(
 			controlID,
 			*self.rect,
@@ -304,7 +304,7 @@ class rCheckControl(rControlTemplate):
 		rv = (
 			"\t0x{:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
-			"\tCheckControl {{\n"
+			"\tCheckControl {{{{\n"
 			"\t\t0x{:04x}, /* flags */\n"
 			"\t\t0x{:04x}, /* more flags */\n"
 			"\t\t0x{:08x}, /* refcon */\n"
@@ -312,7 +312,7 @@ class rCheckControl(rControlTemplate):
 			"\t\t0x{:04x}, /* initial value */\n"
 			"\t\t0x{:08x} /* color table ref */\n"
 			# "\t\t0x{}, /* key equiv */\n"
-			"\t}}"
+			"\t}}}}"
 		).format(
 			controlID,
 			*self.rect,
@@ -400,7 +400,7 @@ class rRadioControl(rControlTemplate):
 		rv = (
 			"\t0x{:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
-			"\tRadioControl {{\n"
+			"\tRadioControl {{{{\n"
 			"\t\t0x{:04x}, /* flags */\n"
 			"\t\t0x{:04x}, /* more flags */\n"
 			"\t\t0x{:08x}, /* refcon */\n"
@@ -408,7 +408,7 @@ class rRadioControl(rControlTemplate):
 			"\t\t0x{:04x}, /* initial value */\n"
 			"\t\t0x{:08x} /* color table ref */\n"
 			# "\t\t0x{}, /* key equiv */\n"
-			"\t}}"
+			"\t}}}}"
 		).format(
 			controlID,
 			*self.rect,
@@ -500,7 +500,7 @@ class rThermometerControl(rControlTemplate):
 		rv = (
 			"\t0x{:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
-			"\tThermometerControl {{\n"
+			"\tThermometerControl {{{{\n"
 			"\t\t0x{:04x}, /* flags */\n"
 			"\t\t0x{:04x}, /* more flags */\n"
 			"\t\t0x{:08x}, /* refcon */\n"
@@ -508,7 +508,7 @@ class rThermometerControl(rControlTemplate):
 			"\t\t0x{:04x}, /* scale */\n"
 			"\t\t0x{:08x} /* color table ref */\n"
 			# "\t\t0x{}, /* key equiv */\n"
-			"\t}}"
+			"\t}}}}"
 		).format(
 			controlID,
 			*self.rect,
@@ -597,13 +597,13 @@ class rRectangleControl(rControlTemplate):
 		rv = (
 			"\t0x{:08x}, /* control ID */\n"
 			"\t{{ {:d}, {:d}, {:d}, {:d} }}, /* rect */\n"
-			"\tRectangleControl {{\n"
+			"\tRectangleControl {{{{\n"
 			"\t\t0x{:04x}, /* flags */\n"
 			"\t\t0x{:04x}, /* more flags */\n"
 			"\t\t0x{:08x}, /* refcon */\n"
 			"\t\t0x{:04x}, /* pen height */\n"
 			"\t\t0x{:04x}, /* pen width */\n"
-			"\t}}"
+			"\t}}}}"
 		).format(
 			controlID,
 			*self.rect,
@@ -713,14 +713,14 @@ class rStatTextControl(rControlTemplate):
 		rv = (
 			"\t0x{:08x}, /* control ID */\n"
 			"\t{}, /* rect */\n"
-			"\tStatTextControl {{\n"
+			"\tStatTextControl {{{{\n"
 			"\t\t0x{:04x}, /* flags */\n"
 			"\t\t0x{:04x}, /* more flags */\n"
 			"\t\t0x{:08x}, /* refcon */\n"
 			"\t\t0x{:08x}, /* text ref (rTextForLETextBox2) */\n"
 			"\t\t0x{:04x}, /* text size */\n"
 			"\t\t{:d}, /* text justification */\n"
-			"\t}}"
+			"\t}}}}"
 		).format(
 			controlID,
 			format_rect(self.rect),
