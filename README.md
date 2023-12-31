@@ -3,6 +3,20 @@ iigs resource compiler
 
 An experimental alternative to rez.
 
+Usage:
+
+```
+prez [options] file....
+```
+
+Options:
+
+* `--hex`: generate rez data statements
+* `--rez`: generate rez resource statements
+* `--data-fork`: save resource fork to a data fork (only win32/macos can generate a resource fork)
+* `-o file`: output file
+
+
 Example:
 
 ```
