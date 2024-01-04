@@ -617,12 +617,12 @@ class rRectangleControl(rControlTemplate):
 		return rv
 
 
-fSquishText         = 0x0010   # 6.0.1
-fTextCanDim         = 0x0008
-fBlastText          = 0x0004
-fSubstituteText     = 0x0002
-fSubTextIsPascal    = 0x0001
-fSubTextIsC         = 0x0000
+# fSquishText         = 0x0010   # 6.0.1
+# fTextCanDim         = 0x0008
+# fBlastText          = 0x0004
+# fSubstituteText     = 0x0002
+# fSubTextIsPascal    = 0x0001
+# fSubTextIsC         = 0x0000
 
 # leftJustify = 0
 # centerJustify = 1
@@ -665,7 +665,7 @@ class rStatTextControl(rControlTemplate):
 		if fBlastText: flags |= 0x0004
 		if fSubstituteText: flags |= 0x0002
 		if fSubTextIsPascal: flags |= 0x0001| 0x0002
-		if fSubTextIsC != None: flags |= 0x0002
+		if fSubTextIsC: flags |= 0x0002
 
 		if leftJust: just = 0
 		elif centerJust: just = 1

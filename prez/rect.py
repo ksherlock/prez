@@ -280,8 +280,8 @@ class rect_class:
 		return rect_class(
 			x = self.x + horizontal,
 			y = self.y + vertical,
-			width = self.width - horizontal,
-			height = self.height - vertical
+			width = self.width - horizontal * 2,
+			height = self.height - vertical * 2
 		)
 
 	def offset_to(self, x, y):
@@ -312,6 +312,27 @@ class rect_class:
 
 	def bottom_right(self):
 		return point_class(x = self.x + self.width, y = self.y + self.height)
+
+	def split_horizontal(self, where):
+
+		if where < 0: where = self.width + where
+		where = max(0, min(self.width, where))
+
+		l = rect_class(x = self.x, y = self.y, height = self.height, width = where)
+		r = rect_class(x = where, y = self.y, height = self.height, width = self.width - where)
+
+		return l, r
+
+	def split_vertical(self, where):
+
+		if where < 0: where = self.height + where
+		where = max(0, min(self.height, where))
+
+		l = rect_class(x = self.x, y = self.y, height = where, width = self.width)
+		r = rect_class(x = self.x, y = where, height = self.height - where, width = self.width)
+
+		return l, r
+
 
 
 	def __str__(self):
@@ -353,6 +374,20 @@ class rect_class:
 		y2 = max(self.y + self.height, other.y + other.height)
 
 		return rect_class(v1 = y1, h1 = x1, v2 = y2, h2 = x2)
+
+	def __add__(self, other):
+		if type(other) == size_class:
+			return rect_class(x = self.x, y = self.y, height = self.height + other.height, width = self.width + other.width)
+
+		raise ValueError("bad parameter")
+
+	def __sub__(self, other):
+		if type(other) == size_class:
+			return rect_class(x = self.x, y = self.y, height = self.height - other.height, width = self.width - other.width)
+
+		raise ValueError("bad parameter")
+
+
 
 point = point_class
 rect = rect_class
