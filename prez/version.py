@@ -85,11 +85,11 @@ def _version_to_version(vstr):
 	stage = 'r'
 	release = 0
 
-	m = re.match(r"([0-9.]+)([dabfr])(\d+)?$", vstr)
+	m = re.match(r"([0-9.]+)([dabfr])?(\d+)?$", vstr)
 	if not m: raise ValueError("Bad version string: {}".format(vstr))
 
-	stage = m[2]
-	release = int(m[3], 10)
+	if m[2]: stage = m[2]
+	if m[3]: release = int(m[3], 10)
 
 	vv = m[1].split('.')
 	if len(vv) < 1 or len(vv) > 3 or not all(vv):
